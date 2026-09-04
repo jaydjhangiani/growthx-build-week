@@ -3,6 +3,7 @@ node_modules/
 .next/
 .vercel/
 coverage/
+tmp/
 .env*
 !.env.example
 .auth-keys.json
