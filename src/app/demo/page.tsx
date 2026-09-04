@@ -3,7 +3,7 @@ import { WebsitePreview } from "@/components/onboarding/preference-studio";
 import { samplePractice } from "@/content/sample-practice";
 
 export const metadata: Metadata = {
-  title: "Diva Mehta · Releaf sample website",
+  title: "Psychologist website example · Releaf",
   description: "A fictional sample psychologist website created with Releaf.",
 };
 
@@ -35,7 +35,7 @@ export default function DemoPage() {
           qualifications: [...samplePractice.qualifications],
           certifications: [...samplePractice.certifications],
           acceptingNewClients: true,
-          contactEmail: "hello@divamehta.in",
+          contactEmail: "hello@yourpractice.com",
           services: samplePractice.services.map((service) => ({
             name: service.title,
             format: service.format.split(" · ")[0].toLowerCase(),
@@ -52,7 +52,7 @@ export default function DemoPage() {
         content={{
           headline: samplePractice.headline,
           heroEyebrow: `${samplePractice.credential} · Mumbai`,
-          heroSupport: samplePractice.introduction,
+          heroSupport: samplePractice.heroSupport,
           biography: samplePractice.biography,
           whoYouHelp: samplePractice.introduction,
           therapeuticApproach: samplePractice.approach,
@@ -80,7 +80,7 @@ export default function DemoPage() {
         }}
         sectionOrder={demoSections}
         interactive
-        bookingUrl="https://calendly.com/diva-mehta/discovery-call"
+        bookingUrl="https://calendly.com/your-practice/discovery-call"
       />
     </main>
   );

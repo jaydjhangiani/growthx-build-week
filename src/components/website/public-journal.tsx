@@ -14,7 +14,7 @@ export function PublicJournal({ subdomain }: { subdomain: string }) {
     return (
       <div className="public-journal-empty">
         <small>From the journal</small>
-        <h2>New writing will appear here.</h2>
+        <h2>Articles and reflections will be shared here.</h2>
       </div>
     );
   const imageCounts = new Map<string, number>();

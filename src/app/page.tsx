@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { AccountLink } from "@/components/auth/account-link";
 import { ReleafLogo } from "@/components/brand/releaf-logo";
+import { samplePractice } from "@/content/sample-practice";
 
 export default function ReleafHomePage() {
   return (
@@ -36,7 +36,7 @@ export default function ReleafHomePage() {
               Create my website <span aria-hidden="true">→</span>
             </Link>
             <Link className="text-link" href="/demo">
-              Explore Diva’s example <span aria-hidden="true">↗</span>
+              Explore an example website <span aria-hidden="true">↗</span>
             </Link>
           </div>
           <p className="releaf-calm-note">
@@ -48,25 +48,15 @@ export default function ReleafHomePage() {
             <span />
             <span />
             <span />
-            <small>diva.releaf</small>
+            <small>your-name.releaf</small>
           </div>
           <div className="demo-page-preview">
             <div>
               <small>Counselling psychologist · Mumbai</small>
-              <h2>
-                A steady place to
-                <br />
-                <em>hear yourself</em> clearly.
-              </h2>
-              <span>Book a discovery call →</span>
+              <h2>{samplePractice.headline}</h2>
+              <p>{samplePractice.heroSupport}</p>
+              <span>See available times →</span>
             </div>
-            <Image
-              src="/diva-mehta.png"
-              alt="Fictional sample psychologist website"
-              fill
-              priority
-              sizes="(max-width: 900px) 90vw, 45vw"
-            />
           </div>
           <Link href="/demo">
             Open the full sample website <span aria-hidden="true">↗</span>

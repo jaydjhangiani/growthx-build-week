@@ -370,7 +370,7 @@ function WebsiteEditorWorkspace({
                   onChange={(event) =>
                     update({ heroSupport: event.target.value })
                   }
-                  placeholder="Support for people navigating what matters to you and life’s quieter pressures."
+                  placeholder="Therapy for adults navigating anxiety, relationships, self-worth, and life transitions."
                 />
               </label>
               <label>
@@ -390,7 +390,7 @@ function WebsiteEditorWorkspace({
                   onChange={(event) =>
                     update({ exploreHeading: event.target.value })
                   }
-                  placeholder="You don’t have to carry it alone."
+                  placeholder="Support for what life is asking of you."
                 />
               </label>
               <label>
@@ -471,7 +471,7 @@ function WebsiteEditorWorkspace({
                         onChange={(event) =>
                           updateFaq(index, { question: event.target.value })
                         }
-                        placeholder="How often will we meet?"
+                        placeholder="What can I expect from the first session?"
                       />
                     </label>
                     <label>
@@ -482,7 +482,7 @@ function WebsiteEditorWorkspace({
                         onChange={(event) =>
                           updateFaq(index, { answer: event.target.value })
                         }
-                        placeholder="Share a short, clear answer."
+                        placeholder="Explain how the first session works and what a client can expect."
                       />
                     </label>
                   </section>

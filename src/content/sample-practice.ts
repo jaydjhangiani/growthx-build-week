@@ -7,12 +7,14 @@ export const primaryNavigation = [
 ] as const;
 
 export const samplePractice = {
-  name: "Diva Mehta",
+  name: "Enter your name",
   credential: "Counselling Psychologist",
   location: "Bandra West, Mumbai · Online across India",
-  headline: "A steady place to hear yourself clearly.",
+  headline: "Make room for what you’ve been carrying.",
+  heroSupport:
+    "A calm, confidential space for anxiety, relationships, self-worth, and life’s difficult transitions.",
   introduction:
-    "Therapy for young adults navigating anxiety, relationships, identity, and the quiet pressure to have everything figured out.",
+    "I support young adults navigating anxiety, relationships, identity, and the pressure to have everything figured out.",
   biography:
     "I work with adults who look capable on the outside but feel overwhelmed underneath. Our sessions make room for what is difficult, without rushing you toward a neat answer.",
   approach:

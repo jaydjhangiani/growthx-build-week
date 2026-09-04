@@ -6534,32 +6534,29 @@ footer p {
   position: relative;
   min-height: min(57vw, 610px);
   overflow: hidden;
-  background: var(--paper);
+  background:
+    radial-gradient(circle at 84% 22%, rgba(255, 255, 255, .78) 0 8%, transparent 8.2%),
+    radial-gradient(circle at 86% 25%, transparent 0 21%, rgba(255, 255, 255, .36) 21.2% 21.7%, transparent 21.9%),
+    linear-gradient(125deg, #ffffff 4%, #f4faff 43%, #ccecff 72%, #83c8ef 100%);
   box-shadow: 0 18px 38px rgba(23, 45, 59, 0.12);
 }
 .demo-page-preview::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(240, 248, 255, 0.92) 34%,
-    rgba(126, 207, 249, 0.5) 64%,
-    rgba(20, 167, 243, 0.16) 100%
-  );
+  width: clamp(180px, 26vw, 360px);
+  aspect-ratio: 1;
+  right: -12%;
+  bottom: -18%;
+  border: clamp(34px, 5vw, 72px) solid rgba(255, 255, 255, .24);
+  border-radius: 50%;
   z-index: 1;
-}
-.demo-page-preview img {
-  object-fit: cover;
-  object-position: 70% center;
 }
 .demo-page-preview > div {
   position: absolute;
   z-index: 2;
   left: 7%;
   top: 14%;
-  max-width: 68%;
+  max-width: 76%;
 }
 .demo-page-preview small {
   text-transform: uppercase;
@@ -6567,8 +6564,18 @@ footer p {
   font-size: 8px;
 }
 .demo-page-preview h2 {
-  font-size: clamp(34px, 4vw, 64px);
-  margin: 24px 0 34px;
+  max-width: 620px;
+  font-size: clamp(32px, 3.6vw, 58px);
+  margin: 24px 0 18px;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+.demo-page-preview > div > p {
+  max-width: 480px;
+  margin: 0 0 32px;
+  color: #405d6b;
+  font-size: clamp(11px, 1vw, 15px);
+  line-height: 1.65;
 }
 .demo-page-preview > div > span {
   background: var(--blue);

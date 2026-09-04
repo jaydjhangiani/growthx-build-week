@@ -74,7 +74,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   return (
     <form className="auth-form" onSubmit={handleSubmit} noValidate>
       {isSignUp ? (
-        <label>Full name<input name="name" autoComplete="name" placeholder="Diva Mehta" aria-invalid={Boolean(fieldErrors.name)} />{fieldErrors.name ? <span className="field-error">{fieldErrors.name}</span> : null}</label>
+        <label>Full name<input name="name" autoComplete="name" placeholder="Enter your full name" aria-invalid={Boolean(fieldErrors.name)} />{fieldErrors.name ? <span className="field-error">{fieldErrors.name}</span> : null}</label>
       ) : null}
       <label>Email address<input name="email" type="email" autoComplete="email" placeholder="you@example.com" aria-invalid={Boolean(fieldErrors.email)} />{fieldErrors.email ? <span className="field-error">{fieldErrors.email}</span> : null}</label>
       <label>Password<input name="password" type="password" autoComplete={isSignUp ? "new-password" : "current-password"} placeholder={isSignUp ? "8+ characters, number and symbol" : "Your password"} aria-invalid={Boolean(fieldErrors.password)} />{fieldErrors.password ? <span className="field-error">{fieldErrors.password}</span> : null}</label>

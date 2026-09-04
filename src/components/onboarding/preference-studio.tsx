@@ -415,10 +415,10 @@ export function WebsitePreview({
   const headline =
     content?.headline ||
     (preferences.tone === "warm"
-      ? "A gentle place to feel more like yourself."
+      ? "A calm place to understand what you’re carrying."
       : preferences.tone === "grounded"
-        ? "Space to understand what’s weighing on you."
-        : "Thoughtful support for lasting emotional wellbeing.");
+        ? "Therapy for the feelings that keep showing up."
+        : "Evidence-informed therapy, shaped around you.");
   const services = profile?.services?.length
     ? profile.services
     : [
@@ -482,7 +482,7 @@ export function WebsitePreview({
             <h1>{headline}</h1>
             <p>
               {content?.heroSupport ||
-                `Support for people navigating ${specialization.toLowerCase()} and life’s quieter pressures.`}
+                `A confidential space to explore ${specialization.toLowerCase()}, understand recurring patterns, and move forward at your own pace.`}
             </p>
             {bookingAvailable && interactive ? (
               <a
@@ -539,7 +539,7 @@ export function WebsitePreview({
           <p className="preview-body-copy">
             {content?.biography ||
               profile?.biography ||
-              "Your biography will introduce your approach and the kind of space you offer."}
+              "I offer a warm, thoughtful space where you can speak openly, notice patterns, and work toward changes that feel right for you."}
           </p>
         </section>
       );
@@ -554,7 +554,7 @@ export function WebsitePreview({
             <p>
               {content?.whoYouHelp ||
                 profile?.whoYouHelp ||
-                "The people and situations you support will appear here."}
+                "I support adults navigating anxiety, relationships, self-worth, burnout, and periods of change."}
             </p>
           </div>
           <div className="preview-focus-list">
@@ -581,7 +581,7 @@ export function WebsitePreview({
           <p className="preview-body-copy">
             {content?.therapeuticApproach ||
               profile?.therapeuticApproach ||
-              "Your therapeutic approach will appear here."}
+              "Sessions are collaborative and paced around your needs. Together, we’ll understand what is happening now and practise new ways of responding."}
           </p>
         </section>
       );
@@ -600,7 +600,7 @@ export function WebsitePreview({
           <ul>
             {(training.length
               ? training
-              : [{ name: "Your qualifications will appear here.", place: "" }]
+              : [{ name: "Add your degree, training, and professional certifications.", place: "" }]
             ).map((item) => (
               <li key={`${item.name}-${item.place}`}>
                 {item.name}{item.place ? ` - ${item.place}` : ""}
@@ -649,7 +649,7 @@ export function WebsitePreview({
         >
           <small>Kind words</small>
           <blockquote>
-            “A testimonial shared with permission will appear here.”
+            “Add a testimonial that you have permission to share.”
           </blockquote>
           <p>— Client name or context</p>
         </section>
