@@ -9,3 +9,4 @@ coverage/
 .auth-test*.json
 .DS_Store
 *.tsbuildinfo
+.vercel
