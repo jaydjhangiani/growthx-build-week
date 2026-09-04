@@ -102,8 +102,6 @@ The research included a survey of 239 respondents and reported:
 
 The thesis also observed that mental-health professionals relied on platforms such as Instagram, Facebook, and LinkedIn to advertise and reach potential clients. It argued that a dedicated digital platform could improve their reach and marketability.
 
-**Source:** `/Users/jayjhangiani/.Trash/Transfer/CertiReleaf1.docx-merged.pdf`
-
 ### Evidence boundary
 
 The thesis survey studied potential users of a broader mental-health platform. It did not interview psychologists about website-building problems. It supports the wider access problem and Releaf’s founder-market insight, but it must not be presented as 239 psychologist interviews or direct validation of the current website builder.
