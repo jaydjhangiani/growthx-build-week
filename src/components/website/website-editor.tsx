@@ -34,7 +34,7 @@ const sections = [
   ["about", "About me"],
   ["who-i-help", "Who I help"],
   ["approach", "Therapeutic approach"],
-  ["qualifications", "Qualifications"],
+  ["qualifications", "Training & practice"],
   ["services", "Services"],
   ["testimonials", "Testimonials"],
   ["faqs", "FAQs"],

@@ -7,7 +7,7 @@ describe("guided profile validation", () => {
   });
 
   it("accepts Diva's complete profile steps", () => {
-    expect(credentialsSchema.safeParse({ qualifications: ["M.A. Counselling Psychology"], certifications: [], yearsExperience: 5 }).success).toBe(true);
+    expect(credentialsSchema.safeParse({ qualifications: ["M.A. Counselling Psychology"], certifications: [{ name: "REBT practicum", place: "Albert Ellis Institute, New York" }], yearsExperience: 5 }).success).toBe(true);
     expect(practiceSchema.safeParse({ biography: "I offer a warm and thoughtful space for young adults in Mumbai.", whoYouHelp: "Young adults navigating anxiety and relationships.", specializations: ["Anxiety"], therapeuticApproach: "Collaborative, trauma-informed, and paced around each person." }).success).toBe(true);
     expect(servicesSchema.safeParse({ services: [{ name: "Individual therapy", format: "online", durationMinutes: 50, feeInr: 2000 }], contactEmail: "diva@example.com" }).success).toBe(true);
   });

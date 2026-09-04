@@ -9,6 +9,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { credentialsSchema, identitySchema, practiceSchema, servicesSchema } from "@/lib/onboarding-schema";
 
 type Service = { name: string; format: "online" | "offline" | "hybrid"; durationMinutes: number; feeInr: number };
+type Certification = { name: string; place: string };
 type Draft = {
   currentStep: number;
   completedSteps: number[];
@@ -18,7 +19,7 @@ type Draft = {
   languages?: string[];
   profilePhotoUrl?: string | null;
   qualifications?: string[];
-  certifications?: string[];
+  certifications?: Array<string | Certification>;
   yearsExperience?: number;
   biography?: string;
   whoYouHelp?: string;
@@ -34,7 +35,7 @@ type FormState = {
   practiceLocation: string;
   languages: string;
   qualifications: string;
-  certifications: string;
+  certifications: Certification[];
   yearsExperience: string;
   biography: string;
   whoYouHelp: string;
@@ -62,7 +63,12 @@ function initialState(draft: Draft | null): FormState {
     practiceLocation: draft?.practiceLocation ?? "",
     languages: draft?.languages?.join(", ") ?? "",
     qualifications: draft?.qualifications?.join("\n") ?? "",
-    certifications: draft?.certifications?.join("\n") ?? "",
+    certifications:
+      draft?.certifications?.map((certification) =>
+        typeof certification === "string"
+          ? { name: certification, place: "" }
+          : certification,
+      ) ?? [],
     yearsExperience: draft?.yearsExperience?.toString() ?? "",
     biography: draft?.biography ?? "",
     whoYouHelp: draft?.whoYouHelp ?? "",
@@ -140,7 +146,7 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
 
   function validateCurrentStep() {
     if (step === 1) return identitySchema.safeParse({ fullName: form.fullName, city: form.city, practiceLocation: form.practiceLocation, languages: splitList(form.languages) });
-    if (step === 2) return credentialsSchema.safeParse({ qualifications: splitList(form.qualifications), certifications: splitList(form.certifications), yearsExperience: Number(form.yearsExperience) });
+    if (step === 2) return credentialsSchema.safeParse({ qualifications: splitList(form.qualifications), certifications: form.certifications.filter((item) => item.name.trim() || item.place.trim()), yearsExperience: Number(form.yearsExperience) });
     if (step === 3) return practiceSchema.safeParse({ biography: form.biography, whoYouHelp: form.whoYouHelp, specializations: splitList(form.specializations), therapeuticApproach: form.therapeuticApproach });
     return servicesSchema.safeParse({ services: form.services, contactEmail: form.contactEmail });
   }
@@ -188,6 +194,33 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
     setForm((current) => ({ ...current, services: current.services.filter((_, serviceIndex) => serviceIndex !== index) }));
   }
 
+  function updateCertification(index: number, patch: Partial<Certification>) {
+    setForm((current) => ({
+      ...current,
+      certifications: current.certifications.map((certification, certificationIndex) =>
+        certificationIndex === index ? { ...certification, ...patch } : certification,
+      ),
+    }));
+    setErrors({});
+    setSaveState("idle");
+  }
+
+  function addCertification() {
+    setForm((current) => ({
+      ...current,
+      certifications: [...current.certifications, { name: "", place: "" }],
+    }));
+  }
+
+  function removeCertification(index: number) {
+    setForm((current) => ({
+      ...current,
+      certifications: current.certifications.filter(
+        (_, certificationIndex) => certificationIndex !== index,
+      ),
+    }));
+  }
+
   const currentStep = steps[step - 1];
   const progress = ((step - 1) / (steps.length - 1)) * 100;
 
@@ -222,7 +255,8 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
 
           {step === 2 ? <div className="profile-fields">
             <Field label="Qualifications" hint="One qualification per line" error={errors.qualifications}><textarea value={form.qualifications} onChange={(e) => setField("qualifications", e.target.value)} rows={4} placeholder={"M.A. Counselling Psychology\nB.A. Psychology"} aria-invalid={Boolean(errors.qualifications)} /></Field>
-            <Field label="Certifications" hint="Optional · One certification per line"><textarea value={form.certifications} onChange={(e) => setField("certifications", e.target.value)} rows={3} placeholder="Advanced training in trauma-informed practice" /></Field>
+            <div className="service-editor-heading"><div><b>Certifications</b><p>Optional · Add the course and where you completed it.</p></div><button type="button" onClick={addCertification}>+ Add certification</button></div>
+            {form.certifications.map((certification, index) => <div className="service-editor certification-editor" key={index}><div className="service-editor-title"><span>Certification 0{index + 1}</span><button type="button" onClick={() => removeCertification(index)}>Remove</button></div><div className="field-row"><Field label="Certification name" error={errors[`certifications.${index}.name`]}><textarea rows={2} value={certification.name} onChange={(event) => updateCertification(index, { name: event.target.value })} placeholder="Advanced practicum in rational emotive behavioural therapy by Albert Ellis Institute" aria-invalid={Boolean(errors[`certifications.${index}.name`])} /></Field><Field label="Place" hint="City"><input value={certification.place} onChange={(event) => updateCertification(index, { place: event.target.value })} placeholder="New York" /></Field></div></div>)}
             <Field label="Years of experience" error={errors.yearsExperience}><div className="number-field"><input type="number" min="0" max="60" value={form.yearsExperience} onChange={(e) => setField("yearsExperience", e.target.value)} placeholder="5" aria-invalid={Boolean(errors.yearsExperience)} /><span>years</span></div></Field>
           </div> : null}
 
@@ -242,7 +276,7 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
 
           {step === 5 ? <div className="profile-review">
             <ReviewSection number="01" title="You & your practice" onEdit={() => goToStep(1)}><h3>{form.fullName}</h3><p>{form.practiceLocation}, {form.city}</p><div className="review-tags">{splitList(form.languages).map((item) => <span key={item}>{item}</span>)}</div></ReviewSection>
-            <ReviewSection number="02" title="Training & experience" onEdit={() => goToStep(2)}><h3>{form.yearsExperience} years of experience</h3><p>{splitList(form.qualifications).join(" · ")}</p></ReviewSection>
+            <ReviewSection number="02" title="Training & experience" onEdit={() => goToStep(2)}><h3>{form.yearsExperience} years of experience</h3><p>{splitList(form.qualifications).join(" · ")}</p>{form.certifications.map((certification) => <p key={`${certification.name}-${certification.place}`}><b>{certification.name}</b>{certification.place ? ` · ${certification.place}` : ""}</p>)}</ReviewSection>
             <ReviewSection number="03" title="How you help" onEdit={() => goToStep(3)}><h3>{splitList(form.specializations).join(" · ")}</h3><p>{form.biography}</p></ReviewSection>
             <ReviewSection number="04" title="Services & contact" onEdit={() => goToStep(4)}>{form.services.map((service) => <p key={service.name}><b>{service.name}</b> · {service.format} · {service.durationMinutes} min · ₹{service.feeInr.toLocaleString("en-IN")}</p>)}</ReviewSection>
             <div className="profile-ready"><span>✓</span><div><b>Your practice profile is saved</b><p>Next, you’ll choose the sections, tone, and visual direction for your website.</p></div></div>

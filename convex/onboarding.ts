@@ -8,6 +8,10 @@ const serviceValidator = v.object({
   durationMinutes: v.number(),
   feeInr: v.number(),
 });
+const certificationValidator = v.union(
+  v.string(),
+  v.object({ name: v.string(), place: v.string() }),
+);
 
 async function requireUserId(ctx: { auth: { getUserIdentity(): Promise<unknown> } }) {
   const userId = await getAuthUserId(ctx as never);
@@ -43,7 +47,7 @@ export const saveStep = mutation({
     step: v.number(),
     data: v.union(
       v.object({ fullName: v.string(), city: v.string(), practiceLocation: v.string(), languages: v.array(v.string()) }),
-      v.object({ qualifications: v.array(v.string()), certifications: v.array(v.string()), yearsExperience: v.number() }),
+      v.object({ qualifications: v.array(v.string()), certifications: v.array(certificationValidator), yearsExperience: v.number() }),
       v.object({ biography: v.string(), whoYouHelp: v.string(), specializations: v.array(v.string()), therapeuticApproach: v.string() }),
       v.object({ services: v.array(serviceValidator), contactEmail: v.string() }),
     ),
@@ -57,7 +61,19 @@ export const saveStep = mutation({
       cleaned = { fullName: required(data.fullName, "Name", 2), city: required(data.city, "City", 2), practiceLocation: required(data.practiceLocation, "Practice location", 2), languages: cleanList(data.languages, "language") };
     } else if (step === 2 && "qualifications" in data) {
       if (!Number.isInteger(data.yearsExperience) || data.yearsExperience < 0 || data.yearsExperience > 60) throw new ConvexError("Enter years of experience between 0 and 60.");
-      cleaned = { qualifications: cleanList(data.qualifications, "qualification"), certifications: data.certifications.map((item) => item.trim()).filter(Boolean), yearsExperience: data.yearsExperience };
+      cleaned = {
+        qualifications: cleanList(data.qualifications, "qualification"),
+        certifications: data.certifications.flatMap((item) => {
+          if (typeof item === "string") {
+            const name = item.trim();
+            return name ? [{ name, place: "" }] : [];
+          }
+          const name = item.name.trim();
+          if (!name) return [];
+          return [{ name, place: item.place.trim() }];
+        }),
+        yearsExperience: data.yearsExperience,
+      };
     } else if (step === 3 && "biography" in data) {
       cleaned = { biography: required(data.biography, "Biography", 40), whoYouHelp: required(data.whoYouHelp, "Who you help", 20), specializations: cleanList(data.specializations, "specialization"), therapeuticApproach: required(data.therapeuticApproach, "Therapeutic approach", 30) };
     } else if (step === 4 && "services" in data) {

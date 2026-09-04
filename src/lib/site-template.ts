@@ -2,6 +2,7 @@ const navigationLabels: Record<string, string> = {
   about: "About",
   "who-i-help": "Therapy",
   services: "Services",
+  qualifications: "Training",
   blog: "Journal",
   booking: "Book",
   enquiry: "Enquire",
@@ -26,6 +27,23 @@ export function navigationForSections(sectionIds: readonly string[]) {
     const label = navigationLabels[sectionId];
     return label ? [{ label, href: `#${sectionId}` }] : [];
   });
+}
+
+export function trainingAndPracticeItems(
+  qualifications: readonly string[],
+  certifications: readonly (string | { name: string; place: string })[],
+) {
+  const degrees = qualifications.map((name) => ({ name, place: "" }));
+  if (qualifications.length >= 3) return degrees;
+
+  return [
+    ...degrees,
+    ...certifications.map((certification) =>
+      typeof certification === "string"
+        ? { name: certification, place: "" }
+        : certification,
+    ),
+  ];
 }
 
 export function formatServiceDetails(service: {

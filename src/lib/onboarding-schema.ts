@@ -11,7 +11,12 @@ export const identitySchema = z.object({
 
 export const credentialsSchema = z.object({
   qualifications: list("qualification"),
-  certifications: z.array(z.string().trim()).transform((items) => items.filter(Boolean)),
+  certifications: z.array(
+    z.object({
+      name: z.string().trim().min(2, "Enter the certification name."),
+      place: z.string().trim(),
+    }),
+  ),
   yearsExperience: z.number().int().min(0, "Enter 0 or more years.").max(60, "Enter 60 years or fewer."),
 });
 

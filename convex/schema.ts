@@ -2,6 +2,11 @@ import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+const certificationValidator = v.union(
+  v.string(),
+  v.object({ name: v.string(), place: v.string() }),
+);
+
 export default defineSchema({
   ...authTables,
   profiles: defineTable({
@@ -19,7 +24,7 @@ export default defineSchema({
     languages: v.optional(v.array(v.string())),
     profilePhotoId: v.optional(v.id("_storage")),
     qualifications: v.optional(v.array(v.string())),
-    certifications: v.optional(v.array(v.string())),
+    certifications: v.optional(v.array(certificationValidator)),
     yearsExperience: v.optional(v.number()),
     biography: v.optional(v.string()),
     whoYouHelp: v.optional(v.string()),
@@ -185,7 +190,7 @@ export default defineSchema({
       city: v.string(),
       profilePhotoId: v.optional(v.id("_storage")),
       qualifications: v.array(v.string()),
-      certifications: v.optional(v.array(v.string())),
+      certifications: v.optional(v.array(certificationValidator)),
       specializations: v.optional(v.array(v.string())),
       services: v.array(
         v.object({

@@ -6588,10 +6588,13 @@ footer p {
   gap: clamp(12px, 2.2vw, 30px);
 }
 .website-preview > header nav :is(a, span) {
-  font-size: .72em;
+  font-size: clamp(10px, .95cqw, 14px);
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
+}
+.website-preview > header > :is(.preview-action, button) {
+  font-size: clamp(10px, .9cqw, 13px);
 }
 .preview-hero {
   min-height: 520px;

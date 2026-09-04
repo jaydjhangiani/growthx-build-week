@@ -19,9 +19,14 @@ export const samplePractice = {
     "My approach is collaborative, trauma-informed, and grounded in each person’s pace. We may notice patterns, practise new ways of responding, and stay curious about what your emotions are trying to protect.",
   qualifications: [
     "M.A. Counselling Psychology",
-    "Advanced training in trauma-informed practice",
     "5 years of experience",
     "Sessions in English and Hindi",
+  ],
+  certifications: [
+    {
+      name: "Advanced training in trauma-informed practice",
+      place: "Albert Ellis Institute, New York",
+    },
   ],
   focusAreas: ["Anxiety & overwhelm", "Relationships", "Self-worth", "Life transitions"],
   services: [

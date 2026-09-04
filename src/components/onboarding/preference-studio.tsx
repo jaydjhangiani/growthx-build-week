@@ -9,6 +9,7 @@ import {
   formatServiceDetails,
   navigationForSections,
   orderedEnabledSections,
+  trainingAndPracticeItems,
 } from "@/lib/site-template";
 
 export type Tone = "warm" | "grounded" | "professional";
@@ -29,7 +30,7 @@ export type Profile = {
   therapeuticApproach?: string;
   profilePhotoUrl?: string | null;
   qualifications?: string[];
-  certifications?: string[];
+  certifications?: Array<string | { name: string; place: string }>;
   yearsExperience?: number;
   languages?: string[];
   contactEmail?: string;
@@ -78,7 +79,7 @@ const sections = [
   ["about", "About me"],
   ["who-i-help", "Who I help"],
   ["approach", "Therapeutic approach"],
-  ["qualifications", "Qualifications"],
+  ["qualifications", "Training & practice"],
   ["services", "Services"],
   ["testimonials", "Testimonials"],
   ["faqs", "FAQs"],
@@ -561,10 +562,11 @@ export function WebsitePreview({
         </section>
       );
     if (id === "qualifications") {
-      const training = [
-        ...(profile?.qualifications ?? []),
-        ...(profile?.certifications ?? []),
-      ];
+      const qualifications = profile?.qualifications ?? [];
+      const training = trainingAndPracticeItems(
+        qualifications,
+        profile?.certifications ?? [],
+      );
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-qualifications")}>
           <div>
@@ -574,8 +576,12 @@ export function WebsitePreview({
           <ul>
             {(training.length
               ? training
-              : ["Your qualifications will appear here."]
-            ).map((qualification) => <li key={qualification}>{qualification}</li>)}
+              : [{ name: "Your qualifications will appear here.", place: "" }]
+            ).map((item) => (
+              <li key={`${item.name}-${item.place}`}>
+                {item.name}{item.place ? ` - ${item.place}` : ""}
+              </li>
+            ))}
           </ul>
         </section>
       );

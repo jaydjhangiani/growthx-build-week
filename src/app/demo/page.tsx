@@ -34,6 +34,7 @@ export default function DemoPage() {
           therapeuticApproach: samplePractice.approach,
           profilePhotoUrl: "/diva-mehta.png",
           qualifications: [...samplePractice.qualifications],
+          certifications: [...samplePractice.certifications],
           contactEmail: "hello@divamehta.in",
           services: samplePractice.services.map((service) => ({
             name: service.title,
