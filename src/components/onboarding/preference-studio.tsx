@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
+import {
+  formatServiceDetails,
+  navigationForSections,
+  orderedEnabledSections,
+} from "@/lib/site-template";
 
 export type Tone = "warm" | "grounded" | "professional";
 export type Palette = "monsoon" | "sage" | "clay" | "lavender";
@@ -34,7 +39,7 @@ export type Profile = {
     feeInr: number;
   }>;
 } | null;
-type PreviewContent = {
+export type PreviewContent = {
   headline?: string;
   heroEyebrow?: string;
   heroSupport?: string;
@@ -414,6 +419,11 @@ export function WebsitePreview({
           format: "online",
         },
       ];
+  const visibleSections = orderedEnabledSections(
+    sectionOrder,
+    preferences.enabledSections,
+  );
+  const navigation = navigationForSections(visibleSections);
   const sectionBackgrounds = new Map(
     appearance.sectionBackgrounds.map((item) => [
       item.sectionId,
@@ -445,7 +455,7 @@ export function WebsitePreview({
               {content?.heroEyebrow ||
                 `Counselling psychologist · ${profile?.city || "Your city"}`}
             </small>
-            <h2>{headline}</h2>
+            <h1>{headline}</h1>
             <p>
               {content?.heroSupport ||
                 `Support for people navigating ${specialization.toLowerCase()} and life’s quieter pressures.`}
@@ -463,6 +473,9 @@ export function WebsitePreview({
             ) : (
               <button type="button">Book a discovery call →</button>
             )}
+            <p className="preview-availability">
+              <span /> Accepting enquiries · Online &amp; in person
+            </p>
           </div>
           <div className="preview-photo">
             <div
@@ -492,7 +505,10 @@ export function WebsitePreview({
     if (id === "about")
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-about")}>
-          <h3 className="preview-section-title">About me</h3>
+          <div>
+            <small>About me</small>
+            <h3 className="preview-display-heading">A little about my practice.</h3>
+          </div>
           <p className="preview-body-copy">
             {content?.biography ||
               profile?.biography ||
@@ -502,19 +518,37 @@ export function WebsitePreview({
       );
     if (id === "who-i-help")
       return (
-        <section key={id} id={id} className={sectionClass(id, "preview-focus")}>
-          <h3 className="preview-section-title">Who I help</h3>
-          <p>
-            {content?.whoYouHelp ||
-              profile?.whoYouHelp ||
-              "The people and situations you support will appear here."}
-          </p>
+        <section key={id} id={id} className={sectionClass(id, "preview-therapy-types")}>
+          <div>
+            <small>What we can explore</small>
+            <h3 className="preview-display-heading">You don’t have to carry it alone.</h3>
+            <p>
+              {content?.whoYouHelp ||
+                profile?.whoYouHelp ||
+                "The people and situations you support will appear here."}
+            </p>
+          </div>
+          <div className="preview-focus-list">
+            {(profile?.specializations?.length
+              ? profile.specializations
+              : ["Anxiety & overwhelm", "Relationships", "Self-worth", "Life transitions"]
+            ).map((area, index) => (
+              <div key={area}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h4>{area}</h4>
+                <span aria-hidden="true">↗</span>
+              </div>
+            ))}
+          </div>
         </section>
       );
     if (id === "approach")
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-about")}>
-          <h3 className="preview-section-title">Therapeutic approach</h3>
+          <div>
+            <small>How I work</small>
+            <h3 className="preview-display-heading">Therapeutic approach.</h3>
+          </div>
           <p className="preview-body-copy">
             {content?.therapeuticApproach ||
               profile?.therapeuticApproach ||
@@ -524,12 +558,17 @@ export function WebsitePreview({
       );
     if (id === "qualifications")
       return (
-        <section key={id} id={id} className={sectionClass(id, "preview-focus")}>
-          <h3 className="preview-section-title">Qualifications</h3>
-          <p>
-            {profile?.qualifications?.join(" · ") ||
-              "Your qualifications will appear here."}
-          </p>
+        <section key={id} id={id} className={sectionClass(id, "preview-qualifications")}>
+          <div>
+            <small>Training &amp; practice</small>
+            <h3 className="preview-display-heading">Care backed by thoughtful training.</h3>
+          </div>
+          <ul>
+            {(profile?.qualifications?.length
+              ? profile.qualifications
+              : ["Your qualifications will appear here."]
+            ).map((qualification) => <li key={qualification}>{qualification}</li>)}
+          </ul>
         </section>
       );
     if (id === "services")
@@ -543,11 +582,15 @@ export function WebsitePreview({
           <div>
             {services.slice(0, 2).map((service) => (
               <article key={service.name}>
+                <span className="preview-card-number">
+                  {String(services.indexOf(service) + 1).padStart(2, "0")}
+                </span>
                 <h4>{service.name}</h4>
-                <p>
-                  {service.durationMinutes} minutes · {service.format} · ₹
-                  {service.feeInr.toLocaleString("en-IN")}
-                </p>
+                <dl>
+                  <div><dt>Format</dt><dd>{formatServiceDetails(service).format}</dd></div>
+                  <div><dt>Fee</dt><dd>{formatServiceDetails(service).fee}</dd></div>
+                </dl>
+                <a href="#booking">Choose this session →</a>
               </article>
             ))}
           </div>
@@ -576,11 +619,25 @@ export function WebsitePreview({
     }
     if (id === "faqs")
       return (
-        <section key={id} id={id} className={sectionClass(id, "preview-about")}>
-          <h3 className="preview-section-title">Frequently asked questions</h3>
-          <p className="preview-body-copy">
-            Your practical information will help visitors know what to expect.
-          </p>
+        <section key={id} id={id} className={sectionClass(id, "preview-faq")}>
+          <div>
+            <small>Common questions</small>
+            <h3 className="preview-display-heading">Before we begin.</h3>
+          </div>
+          <div>
+            <details>
+              <summary>Is therapy confidential?<span>+</span></summary>
+              <p>Confidentiality and its limited safety and legal exceptions are discussed before beginning.</p>
+            </details>
+            <details>
+              <summary>How often will we meet?<span>+</span></summary>
+              <p>Session frequency can be decided together based on your needs.</p>
+            </details>
+            <details>
+              <summary>Do you offer emergency support?<span>+</span></summary>
+              <p>This practice is not an emergency service.</p>
+            </details>
+          </div>
         </section>
       );
     if (id === "blog")
@@ -597,11 +654,19 @@ export function WebsitePreview({
     if (id === "blog")
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-blog")}>
-          <h3 className="preview-section-title">From the journal</h3>
-          <div>
-            <i />
-            <i />
-            <i />
+          <header>
+            <small>From the journal</small>
+            <h3 className="preview-display-heading">Words for the space between sessions.</h3>
+          </header>
+          <div className="preview-post-grid">
+            {["When rest still feels unproductive", "What a boundary can sound like", "Beginning therapy before a crisis"].map((title, index) => (
+              <article key={title}>
+                <i className={`preview-post-art art-${index + 1}`} />
+                <small>Journal · {index + 4} min read</small>
+                <h4>{title}</h4>
+                <span>Read article →</span>
+              </article>
+            ))}
           </div>
         </section>
       );
@@ -618,22 +683,22 @@ export function WebsitePreview({
         );
     if (id === "booking")
       return (
-        <section key={id} id={id} className={sectionClass(id, "preview-focus")}>
-          <h3 className="preview-section-title">Book a discovery call</h3>
-          <p>Choose a time that works for you.</p>
-          {interactive ? (
-            <a
-              className="preview-action"
-              href={bookingUrl || "#booking"}
-              target={bookingUrl ? "_blank" : undefined}
-              rel={bookingUrl ? "noreferrer" : undefined}
-              onClick={onBookingClick}
-            >
-              View availability →
-            </a>
-          ) : (
-            <button type="button">View availability →</button>
-          )}
+        <section key={id} id={id} className={sectionClass(id, "preview-booking")}>
+          <div>
+            <small>A first step</small>
+            <h3 className="preview-display-heading">See if this feels like the right fit.</h3>
+            <p>Book a short discovery call, ask questions and decide without pressure.</p>
+          </div>
+          <div className="preview-booking-card">
+            <small>Discovery call</small>
+            <strong>Choose a time that works for you</strong>
+            {interactive ? (
+              <a href={bookingUrl || "#booking"} onClick={onBookingClick}>View available times →</a>
+            ) : (
+              <button type="button">View available times →</button>
+            )}
+            <span>Scheduling is managed securely through Calendly.</span>
+          </div>
         </section>
       );
     if (id === "enquiry")
@@ -649,18 +714,18 @@ export function WebsitePreview({
         );
     if (id === "enquiry")
       return (
-        <section key={id} id={id} className={sectionClass(id, "preview-about")}>
-          <h3 className="preview-section-title">Send an enquiry</h3>
-          <p className="preview-body-copy">
-            Share a few details and I’ll get back to you.
-          </p>
-          {interactive ? (
-            <a className="preview-action" href="#enquiry-form">
-              Start enquiry →
-            </a>
-          ) : (
-            <button type="button">Start enquiry →</button>
-          )}
+        <section key={id} id={id} className={sectionClass(id, "preview-enquiry")}>
+          <div>
+            <small>Prefer to write?</small>
+            <h3 className="preview-display-heading">Send a private enquiry.</h3>
+            <p>Share only what feels comfortable. I’ll get back to you using your preferred contact method.</p>
+          </div>
+          <div className="preview-enquiry-fields" aria-hidden="true">
+            <span>Name</span><i />
+            <span>Email</span><i />
+            <span>Short message</span><i />
+            <button type="button">Send enquiry →</button>
+          </div>
         </section>
       );
     if (id === "contact")
@@ -680,13 +745,13 @@ export function WebsitePreview({
       className={`website-preview palette-${preferences.palette} style-${preferences.visualStyle} heading-font-${appearance.headingFont} heading-${appearance.headingSize} body-font-${appearance.bodyFont} body-${appearance.bodySize} testimonial-${appearance.testimonialSize} spacing-${appearance.sectionSpacing} navbar-${appearance.navbarLayout} navbar-button-${appearance.navbarButtonStyle} image-shape-${appearance.imageShape} image-background-${appearance.imageBackground} image-padding-${appearance.imagePadding} image-border-color-${appearance.imageBorderColor} ${appearance.imageBorder ? "image-border" : ""}`}
     >
       <header>
-        <b>{name}</b>
+        <a className="preview-wordmark" href="#introduction" aria-label={`${name}, home`}>
+          <span>{name.charAt(0)}</span><b>{name}</b>
+        </a>
         <nav>
           {interactive ? (
             <>
-              <a href="#about">About</a>
-              <a href="#services">Services</a>
-              <a href="#blog">Journal</a>
+              {navigation.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
               {appearance.navbarLayout === "centered" ? (
                 <a href={bookingUrl || "#booking"} onClick={onBookingClick}>
                   Book a call
@@ -695,9 +760,7 @@ export function WebsitePreview({
             </>
           ) : (
             <>
-              <span>About</span>
-              <span>Services</span>
-              <span>Journal</span>
+              {navigation.map((item) => <span key={item.href}>{item.label}</span>)}
               {appearance.navbarLayout === "centered" ? (
                 <span>Book a call</span>
               ) : null}
@@ -731,7 +794,7 @@ export function WebsitePreview({
           <button type="button">Book a call</button>
         ) : null}
       </header>
-      {sectionOrder.map(renderSection)}
+      {visibleSections.map(renderSection)}
       <footer>
         {enabled.has("booking") ? (
           <b>Ready for a first conversation?</b>

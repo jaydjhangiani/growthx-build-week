@@ -6528,3 +6528,436 @@ footer p {
   .public-testimonials > header h2 { font-size: 36px; }
   .public-testimonial-controls { flex-wrap: wrap; }
 }
+
+/* Shared psychologist website template: demo, editor preview, and published site */
+.website-preview {
+  --site-section-y: 9%;
+  --site-section-x: 8%;
+  container-type: inline-size;
+}
+.website-preview.heading-small {
+  --preview-hero-heading: clamp(32px, 6cqw, 62px);
+  --preview-section-heading: clamp(18px, 2.2cqw, 28px);
+}
+.website-preview.heading-medium {
+  --preview-hero-heading: clamp(40px, 7.4cqw, 86px);
+  --preview-section-heading: clamp(21px, 2.6cqw, 34px);
+}
+.website-preview.heading-large {
+  --preview-hero-heading: clamp(48px, 8.8cqw, 104px);
+  --preview-section-heading: clamp(25px, 3.1cqw, 40px);
+}
+.website-preview.body-small { --preview-body-size: clamp(11px, 1.05cqw, 15px); }
+.website-preview.body-medium { --preview-body-size: clamp(12px, 1.15cqw, 17px); }
+.website-preview.body-large { --preview-body-size: clamp(14px, 1.3cqw, 19px); }
+.website-preview.spacing-compact { --site-section-y: 6%; }
+.website-preview.spacing-spacious { --site-section-y: 12%; }
+.website-preview > header {
+  min-height: 72px;
+  padding-inline: 5%;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--preview-paper) 94%, transparent);
+  backdrop-filter: blur(14px);
+}
+.preview-wordmark {
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: inherit;
+  text-decoration: none;
+}
+.preview-wordmark > span {
+  width: 34px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50% 50% 48% 52% / 45% 55% 45% 55%;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-style: italic;
+}
+.website-preview > header .preview-wordmark b {
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: 1.15em;
+  font-weight: 500;
+}
+.website-preview > header nav {
+  gap: clamp(12px, 2.2vw, 30px);
+}
+.website-preview > header nav :is(a, span) {
+  font-size: .72em;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.preview-hero {
+  min-height: 520px;
+  padding-inline: 5%;
+  grid-template-columns: 1.04fr .96fr;
+  column-gap: 0;
+  overflow: hidden;
+}
+.style-editorial .preview-hero {
+  grid-template-columns: 1.08fr .92fr;
+}
+.style-editorial .preview-hero > div:first-child {
+  transform: none;
+}
+.preview-hero > div:first-child {
+  padding: clamp(48px, 9%, 110px) 8% clamp(48px, 8%, 90px) 0;
+}
+.preview-hero small,
+.website-preview section > small,
+.website-preview section > div > small,
+.website-preview section > header > small {
+  color: color-mix(in srgb, var(--preview-ink) 65%, transparent);
+  font-size: .72em;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.preview-hero h1 {
+  max-width: 760px;
+  margin: clamp(18px, 3vw, 34px) 0;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: var(--preview-hero-heading, clamp(42px, 6vw, 86px));
+  font-weight: 400;
+  line-height: .98;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+.preview-hero p {
+  max-width: 590px;
+  font-size: 1.12em;
+  line-height: 1.7;
+}
+.preview-availability {
+  margin-top: clamp(26px, 4vw, 46px) !important;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: .76em !important;
+}
+.preview-availability span {
+  width: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #4c8a65;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #4c8a65 14%, transparent);
+}
+.preview-photo {
+  min-height: 520px;
+}
+.preview-photo-frame {
+  width: min(86%, 460px);
+  min-height: 0;
+  aspect-ratio: 4 / 5;
+  place-self: center;
+}
+.preview-about,
+.preview-focus,
+.preview-services,
+.preview-blog,
+.preview-therapy-types,
+.preview-booking,
+.preview-enquiry,
+.preview-faq,
+.preview-qualifications {
+  padding: var(--site-section-y) var(--site-section-x);
+}
+.preview-about {
+  display: grid;
+  grid-template-columns: minmax(180px, .72fr) minmax(0, 1.28fr);
+  gap: 8%;
+}
+.preview-about .preview-section-title {
+  font-size: var(--preview-section-heading, 22px);
+}
+.preview-about .preview-body-copy {
+  max-width: 760px;
+  margin-top: 0;
+  font-size: 1.15em;
+  line-height: 1.85;
+}
+.preview-display-heading {
+  max-width: 760px;
+  margin: clamp(16px, 2.5vw, 28px) 0;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: var(--preview-hero-heading, 48px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.preview-therapy-types {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 8%;
+}
+.preview-therapy-types > div:first-child > p {
+  max-width: 540px;
+  font-size: 1em;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  opacity: .78;
+}
+.preview-focus-list > div {
+  padding: clamp(16px, 2.2vw, 26px) 0;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+}
+.preview-focus-list h4 {
+  margin: 0;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: calc(var(--preview-section-heading, 22px) * 1.15);
+  font-weight: 400;
+}
+.preview-focus-list span {
+  font-size: .72em;
+  opacity: .62;
+}
+.preview-qualifications {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8%;
+}
+.preview-qualifications ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.preview-qualifications li {
+  padding: clamp(15px, 2.2vw, 23px) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ink) 20%, transparent);
+  font-size: .95em;
+  line-height: 1.5;
+}
+.preview-qualifications li::before {
+  content: "✓";
+  margin-right: 16px;
+  color: var(--preview-accent);
+}
+.preview-services > .preview-section-title {
+  max-width: 760px;
+  font-size: var(--preview-hero-heading, 48px);
+}
+.preview-services > div {
+  gap: clamp(12px, 2vw, 24px);
+  margin-top: clamp(26px, 5vw, 58px);
+}
+.preview-services article {
+  padding: clamp(22px, 4vw, 44px);
+  background: color-mix(in srgb, var(--preview-paper) 94%, var(--preview-soft));
+}
+.preview-card-number {
+  color: var(--preview-accent);
+  font-size: .72em;
+  letter-spacing: .12em;
+}
+.preview-services h4 {
+  margin: clamp(28px, 5vw, 48px) 0 22px;
+  font-size: calc(var(--preview-section-heading, 22px) * 1.45);
+}
+.preview-services dl {
+  margin: 0 0 28px;
+  border-top: 1px solid color-mix(in srgb, var(--preview-ink) 16%, transparent);
+}
+.preview-services dl div {
+  padding: 13px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ink) 16%, transparent);
+  font-size: .82em;
+}
+.preview-services dt { opacity: .62; }
+.preview-services dd { margin: 0; text-align: right; font-weight: 700; }
+.preview-services article > a {
+  color: inherit;
+  font-size: .78em;
+  font-weight: 700;
+  text-underline-offset: 5px;
+}
+.preview-blog > header {
+  max-width: 760px;
+}
+.preview-post-grid {
+  margin-top: clamp(28px, 5vw, 60px) !important;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 24px) !important;
+}
+.preview-post-grid article { min-width: 0; }
+.preview-post-art {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  margin-bottom: 18px;
+}
+.preview-post-grid article > small {
+  color: color-mix(in srgb, var(--preview-ink) 58%, transparent);
+  font-size: .66em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.preview-post-grid h4 {
+  min-height: 2.4em;
+  margin: 11px 0 16px;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: calc(var(--preview-section-heading, 22px) * 1.1);
+  font-weight: 400;
+  line-height: 1.15;
+}
+.preview-post-grid article > span {
+  font-size: .76em;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.preview-booking {
+  display: grid;
+  grid-template-columns: 1fr .75fr;
+  align-items: center;
+  gap: 9%;
+}
+.preview-booking > div:first-child > p {
+  max-width: 570px;
+  font-size: 1.05em;
+  line-height: 1.8;
+  opacity: .78;
+}
+.preview-booking-card {
+  padding: clamp(24px, 4vw, 42px);
+  display: grid;
+  gap: 22px;
+  background: var(--preview-paper);
+  color: var(--preview-ink);
+  box-shadow: 14px 14px 0 var(--preview-accent);
+}
+.preview-booking-card strong {
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: calc(var(--preview-section-heading, 22px) * 1.25);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.preview-booking-card :is(a, button) {
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  background: var(--preview-accent);
+  color: var(--preview-ink);
+  cursor: pointer;
+  font-size: .78em;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.preview-booking-card > span { font-size: .72em; opacity: .66; }
+.preview-enquiry {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 9%;
+}
+.preview-enquiry > div:first-child > p {
+  max-width: 440px;
+  font-size: 1em;
+  line-height: 1.75;
+  opacity: .72;
+}
+.preview-enquiry-fields {
+  display: grid;
+  gap: 10px;
+}
+.preview-enquiry-fields > span {
+  margin-top: 12px;
+  font-size: .76em;
+  font-weight: 700;
+}
+.preview-enquiry-fields > i {
+  height: 28px;
+  display: block;
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ink) 24%, transparent);
+}
+.preview-enquiry-fields > button {
+  margin-top: 18px;
+}
+.preview-faq {
+  display: grid;
+  grid-template-columns: .72fr 1.28fr;
+  gap: 9%;
+}
+.preview-faq details {
+  padding: clamp(15px, 2.2vw, 24px) 0;
+  border-top: 1px solid color-mix(in srgb, var(--preview-ink) 20%, transparent);
+}
+.preview-faq details:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ink) 20%, transparent);
+}
+.preview-faq summary {
+  color: inherit;
+  font-family: var(--preview-heading-font, var(--serif));
+  font-size: calc(var(--preview-section-heading, 22px) * .9);
+}
+.preview-faq details p {
+  max-width: 620px;
+  font-size: .9em;
+  line-height: 1.7;
+  opacity: .72;
+}
+.website-preview > footer {
+  padding: 34px 5%;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  background: var(--preview-ink);
+  color: var(--preview-paper);
+  font-size: .8em;
+}
+.public-journal-section,
+.public-booking-section,
+.public-enquiry-shell,
+.public-testimonials-section {
+  padding: var(--site-section-y) var(--site-section-x);
+}
+.public-booking-section {
+  background: var(--preview-ink);
+  color: var(--preview-paper);
+}
+.public-booking-section > header p {
+  color: color-mix(in srgb, var(--preview-paper) 76%, transparent);
+}
+.public-booking-section iframe {
+  background: var(--preview-paper);
+  box-shadow: 14px 14px 0 var(--preview-accent);
+}
+
+@container (max-width: 700px) {
+  .website-preview > header nav { display: none; }
+  .website-preview > header { min-height: 62px; }
+  .preview-hero,
+  .preview-about,
+  .preview-therapy-types,
+  .preview-booking,
+  .preview-enquiry,
+  .preview-faq,
+  .preview-qualifications {
+    grid-template-columns: 1fr;
+  }
+  .preview-hero > div:first-child { padding-right: 0; }
+  .preview-photo { min-height: 360px; }
+  .preview-about,
+  .preview-therapy-types,
+  .preview-booking,
+  .preview-enquiry,
+  .preview-faq,
+  .preview-qualifications { gap: 34px; }
+  .preview-services > div,
+  .preview-post-grid { grid-template-columns: 1fr; }
+  .preview-post-grid h4 { min-height: 0; }
+}
