@@ -174,15 +174,3 @@ I did not run an active Twitter launch or broad outreach campaign during Build W
 ## Full interview record
 
 > It was a lovely experience over all. Not all therapists are well versed in building websites or understanding tech language and script, website builder apps often expect you to have at least some degree of this kind of knowledge—that can make this difficult. Having said that, Releaf is easy to navigate, keeps all the necessities in mind, and is quick to get the job done! The functionality it focuses on is extremely useful, especially in the long run. The aesthetic options are a little limited but I’m sure that will grow with time. The fact that it allows you to connect your Substack, Blogspot, or Medium links to it is a huge help. Most therapists’ websites don’t have that option as of now and that means they have to restart their visibility from scratch. This takes care of that. An additional feature that could be considered and may be of use would be to add links to other directories—whether it’s the QACP directory available online on MHI’s website where the therapist could be listed, Mind Clan’s profile link, etc.—and helpline links. That may add more depth and understanding of the therapist for a potential client.
-
-## Next evidence target
-
-Complete two more interviews with independent psychologists and ask the same core questions:
-
-1. How do prospective clients currently learn about your practice before contacting you?
-2. What makes creating or maintaining a website difficult today?
-3. Which Releaf step felt most valuable or confusing?
-4. Would you use the published website with real prospective clients?
-5. Would you pay for Releaf now? If yes, how much and why?
-
-Three confirming interviews with submission-ready quotes would make Pain-point severity eligible for L4. Five confirming interviews plus at least one genuine “Can I pay for this now?” moment would make it eligible for L5.
