@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.next/
+.vercel/
+coverage/
+.env*
+!.env.example
+.auth-keys.json
+.auth-test*.json
+.DS_Store
+*.tsbuildinfo
