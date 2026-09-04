@@ -121,6 +121,7 @@ export const get = query({
             city: profile.city,
             practiceLocation: profile.practiceLocation,
             qualifications: profile.qualifications,
+            certifications: profile.certifications,
             yearsExperience: profile.yearsExperience,
             languages: profile.languages,
             specializations: profile.specializations,

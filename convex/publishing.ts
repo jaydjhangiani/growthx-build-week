@@ -129,6 +129,8 @@ export const publish = mutation({
       city: profile.city ?? "",
       profilePhotoId: profile.profilePhotoId,
       qualifications: profile.qualifications ?? [],
+      certifications: profile.certifications ?? [],
+      specializations: profile.specializations ?? [],
       services: profile.services ?? [],
       contactEmail: profile.contactEmail ?? "",
       calendlyUrl: booking?.calendlyUrl || undefined,

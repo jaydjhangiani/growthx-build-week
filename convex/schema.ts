@@ -184,6 +184,8 @@ export default defineSchema({
       city: v.string(),
       profilePhotoId: v.optional(v.id("_storage")),
       qualifications: v.array(v.string()),
+      certifications: v.optional(v.array(v.string())),
+      specializations: v.optional(v.array(v.string())),
       services: v.array(
         v.object({
           name: v.string(),

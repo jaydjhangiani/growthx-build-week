@@ -29,6 +29,7 @@ export type Profile = {
   therapeuticApproach?: string;
   profilePhotoUrl?: string | null;
   qualifications?: string[];
+  certifications?: string[];
   yearsExperience?: number;
   languages?: string[];
   contactEmail?: string;
@@ -81,7 +82,7 @@ const sections = [
   ["testimonials", "Testimonials"],
   ["faqs", "FAQs"],
   ["blog", "Blog"],
-  ["booking", "Calendly booking"],
+  ["booking", "Discovery call"],
   ["enquiry", "Enquiry form"],
   ["contact", "Contact information"],
 ] as const;
@@ -556,7 +557,11 @@ export function WebsitePreview({
           </p>
         </section>
       );
-    if (id === "qualifications")
+    if (id === "qualifications") {
+      const training = [
+        ...(profile?.qualifications ?? []),
+        ...(profile?.certifications ?? []),
+      ];
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-qualifications")}>
           <div>
@@ -564,13 +569,14 @@ export function WebsitePreview({
             <h3 className="preview-display-heading">Care backed by thoughtful training.</h3>
           </div>
           <ul>
-            {(profile?.qualifications?.length
-              ? profile.qualifications
+            {(training.length
+              ? training
               : ["Your qualifications will appear here."]
             ).map((qualification) => <li key={qualification}>{qualification}</li>)}
           </ul>
         </section>
       );
+    }
     if (id === "services")
       return (
         <section
@@ -590,7 +596,6 @@ export function WebsitePreview({
                   <div><dt>Format</dt><dd>{formatServiceDetails(service).format}</dd></div>
                   <div><dt>Fee</dt><dd>{formatServiceDetails(service).fee}</dd></div>
                 </dl>
-                <a href="#booking">Choose this session →</a>
               </article>
             ))}
           </div>

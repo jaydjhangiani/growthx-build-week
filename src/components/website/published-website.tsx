@@ -36,6 +36,8 @@ export function PublishedWebsite({ subdomain }: { subdomain: string }) {
           city: site.city,
           profilePhotoUrl: site.profilePhotoUrl,
           qualifications: site.qualifications,
+          certifications: site.certifications,
+          specializations: site.specializations,
           services: site.services,
           contactEmail: site.contactEmail,
           biography: site.biography,
