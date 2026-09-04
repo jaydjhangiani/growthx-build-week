@@ -71,6 +71,7 @@ export function PublishedWebsite({ subdomain }: { subdomain: string }) {
           headline: site.headline,
           heroEyebrow: site.heroEyebrow,
           heroSupport: site.heroSupport,
+          exploreHeading: site.exploreHeading,
           biography: site.biography,
           whoYouHelp: site.whoYouHelp,
           therapeuticApproach: site.therapeuticApproach,

@@ -91,6 +91,8 @@ export const get = query({
       heroSupport:
         draft?.heroSupport ??
         `Support for people navigating ${profile?.specializations?.[0]?.toLowerCase() || "what matters to you"} and life’s quieter pressures.`,
+      exploreHeading:
+        draft?.exploreHeading ?? "You don’t have to carry it alone.",
       biography: draft?.biography ?? profile?.biography ?? "",
       whoYouHelp: draft?.whoYouHelp ?? profile?.whoYouHelp ?? "",
       therapeuticApproach:
@@ -141,6 +143,7 @@ export const save = mutation({
     headline: v.string(),
     heroEyebrow: v.string(),
     heroSupport: v.string(),
+    exploreHeading: v.string(),
     biography: v.string(),
     whoYouHelp: v.string(),
     therapeuticApproach: v.string(),
@@ -261,6 +264,8 @@ export const save = mutation({
       headline: args.headline.trim(),
       heroEyebrow: args.heroEyebrow.trim(),
       heroSupport: args.heroSupport.trim(),
+      exploreHeading:
+        args.exploreHeading.trim() || "You don’t have to carry it alone.",
       biography: args.biography.trim(),
       whoYouHelp: args.whoYouHelp.trim(),
       therapeuticApproach: args.therapeuticApproach.trim(),

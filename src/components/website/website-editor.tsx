@@ -119,6 +119,7 @@ function editorSaveArgs(draft: EditorDraft) {
     headline: draft.headline,
     heroEyebrow: draft.heroEyebrow,
     heroSupport: draft.heroSupport,
+    exploreHeading: draft.exploreHeading,
     biography: draft.biography,
     whoYouHelp: draft.whoYouHelp,
     therapeuticApproach: draft.therapeuticApproach,
@@ -358,7 +359,17 @@ function WebsiteEditorWorkspace({
                 />
               </label>
               <label>
-                Who I help
+                What we can explore — heading
+                <input
+                  value={draft.exploreHeading}
+                  onChange={(event) =>
+                    update({ exploreHeading: event.target.value })
+                  }
+                  placeholder="You don’t have to carry it alone."
+                />
+              </label>
+              <label>
+                What we can explore — copy
                 <textarea
                   rows={4}
                   value={draft.whoYouHelp}
@@ -813,6 +824,7 @@ function WebsiteEditorWorkspace({
                 headline: draft.headline,
                 heroEyebrow: draft.heroEyebrow,
                 heroSupport: draft.heroSupport,
+                exploreHeading: draft.exploreHeading,
                 biography: draft.biography,
                 whoYouHelp: draft.whoYouHelp,
                 therapeuticApproach: draft.therapeuticApproach,

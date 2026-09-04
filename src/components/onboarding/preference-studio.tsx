@@ -44,6 +44,7 @@ export type PreviewContent = {
   headline?: string;
   heroEyebrow?: string;
   heroSupport?: string;
+  exploreHeading?: string;
   biography?: string;
   whoYouHelp?: string;
   therapeuticApproach?: string;
@@ -522,7 +523,9 @@ export function WebsitePreview({
         <section key={id} id={id} className={sectionClass(id, "preview-therapy-types")}>
           <div>
             <small>What we can explore</small>
-            <h3 className="preview-display-heading">You don’t have to carry it alone.</h3>
+            <h3 className="preview-display-heading">
+              {content?.exploreHeading || "You don’t have to carry it alone."}
+            </h3>
             <p>
               {content?.whoYouHelp ||
                 profile?.whoYouHelp ||

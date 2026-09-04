@@ -141,6 +141,8 @@ export const publish = mutation({
       heroSupport:
         draft?.heroSupport ??
         `Support for people navigating ${profile.specializations?.[0]?.toLowerCase() || "what matters to you"} and life’s quieter pressures.`,
+      exploreHeading:
+        draft?.exploreHeading ?? "You don’t have to carry it alone.",
       biography: draft?.biography ?? profile.biography ?? "",
       whoYouHelp: draft?.whoYouHelp ?? profile.whoYouHelp ?? "",
       therapeuticApproach:
