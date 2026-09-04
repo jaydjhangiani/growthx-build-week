@@ -6,33 +6,60 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { publicSitePath } from "@/lib/subdomain";
 
-const analyticsMetrics = [
+const setupSteps = [
   {
-    key: "website_view",
-    label: "Website views",
-    note: "People who opened your site",
-  },
-  { key: "blog_view", label: "Blog views", note: "Published articles opened" },
-  {
-    key: "calendly_click",
-    label: "Calendly clicks",
-    note: "Booking links selected",
+    key: "profile",
+    label: "Practice profile",
+    note: "Your background, approach and services",
+    href: "/onboarding",
+    essential: true,
   },
   {
-    key: "enquiry_start",
-    label: "Form starts",
-    note: "Visitors who began an enquiry",
+    key: "blog",
+    label: "Blog",
+    note: "Publish in Releaf or connect Substack",
+    href: "/dashboard/blog",
+    essential: true,
   },
   {
-    key: "enquiry_complete",
-    label: "Completed enquiries",
-    note: "Enquiries safely received",
+    key: "testimonials",
+    label: "Testimonials",
+    note: "Add written or image trust signals",
+    href: "/dashboard/testimonials",
+    essential: false,
+  },
+  {
+    key: "calendly",
+    label: "Calendly",
+    note: "Offer discovery calls when you are ready",
+    href: "/dashboard/calendly",
+    essential: false,
+  },
+  {
+    key: "enquiry",
+    label: "Enquiry form",
+    note: "Review and save the questions visitors see",
+    href: "/dashboard/enquiry-form",
+    essential: true,
+  },
+  {
+    key: "website",
+    label: "Website builder",
+    note: "Review your content and design",
+    href: "/dashboard/website",
+    essential: true,
+  },
+  {
+    key: "publish",
+    label: "Publish",
+    note: "Choose your address and make the site public",
+    href: "/dashboard/website?panel=publish",
+    essential: true,
   },
 ] as const;
 
 export function DashboardOverview() {
   const publication = useQuery(api.publishing.getStatus);
-  const analytics = useQuery(api.analytics.getDashboard);
   if (publication === undefined)
     return (
       <section className="dashboard-empty">
@@ -51,6 +78,7 @@ export function DashboardOverview() {
         </h1>
         <p>Your website, blog, bookings, and enquiries all live here.</p>
       </header>
+      <LaunchChecklist />
       <article className="website-status-card">
         <div>
           <span
@@ -88,32 +116,97 @@ export function DashboardOverview() {
           ) : null}
         </div>
       </article>
-      <section
-        className="dashboard-analytics"
-        aria-labelledby="analytics-title"
-      >
-        <header>
-          <div>
-            <p>Anonymous totals</p>
-            <h2 id="analytics-title">Website activity</h2>
-          </div>
-          <span>No visitor profiles are created.</span>
-        </header>
-        <div>
-          {analyticsMetrics.map((metric, index) => (
-            <article className={index === 0 ? "primary" : ""} key={metric.key}>
-              <span>{metric.label}</span>
-              <strong>
-                {analytics
-                  ? analytics[metric.key].toLocaleString("en-IN")
-                  : "—"}
-              </strong>
-              <small>{metric.note}</small>
-            </article>
-          ))}
-        </div>
-      </section>
+      <AvailabilitySetting />
       <RetentionSettings />
+    </section>
+  );
+}
+
+function LaunchChecklist() {
+  const setup = useQuery(api.setup.getChecklist);
+  const essentialSteps = setupSteps.filter((step) => step.essential);
+  const completedEssentials = setup
+    ? essentialSteps.filter((step) => setup[step.key]).length
+    : 0;
+  const completion = Math.round(
+    (completedEssentials / essentialSteps.length) * 100,
+  );
+
+  return (
+    <section className="launch-checklist" aria-labelledby="launch-checklist-title">
+      <header>
+        <div>
+          <p>Setup guide</p>
+          <h2 id="launch-checklist-title">
+            {completion === 100 ? "Your essentials are ready" : "Prepare your website"}
+          </h2>
+        </div>
+        <strong>{completedEssentials} of {essentialSteps.length}</strong>
+      </header>
+      <div className="launch-progress" aria-label={`${completion}% complete`}>
+        <span style={{ width: `${completion}%` }} />
+      </div>
+      <div className="launch-steps">
+        {setupSteps.map((step, index) => {
+          const complete = Boolean(setup?.[step.key]);
+          return (
+            <Link href={step.href} key={step.key}>
+              <span className={complete ? "complete" : ""}>
+                {complete ? "✓" : String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <b>{step.label}</b>
+                <small>{step.note}</small>
+              </div>
+              <i>{complete ? "Ready" : step.essential ? "Set up →" : "Optional →"}</i>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function AvailabilitySetting() {
+  const acceptingNewClients = useQuery(api.onboarding.getAvailability);
+  const setAvailability = useMutation(api.onboarding.setAvailability);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function toggle(nextValue: boolean) {
+    if (saving || acceptingNewClients === undefined) return;
+    setSaving(true);
+    setError("");
+    try {
+      await setAvailability({ acceptingNewClients: nextValue });
+    } catch {
+      setError("Your availability could not be changed. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="dashboard-availability" aria-labelledby="availability-title">
+      <div>
+        <p>Website availability</p>
+        <h2 id="availability-title">Accepting new clients</h2>
+        <span>
+          When this is off, the availability message is hidden from your
+          website. Your enquiry form stays available.
+        </span>
+        {error ? <small role="alert">{error}</small> : null}
+      </div>
+      <label className="dashboard-switch">
+        <input
+          type="checkbox"
+          checked={acceptingNewClients ?? true}
+          disabled={saving || acceptingNewClients === undefined}
+          onChange={(event) => void toggle(event.target.checked)}
+        />
+        <span aria-hidden="true" />
+        <b>{acceptingNewClients === false ? "Not accepting" : "Accepting"}</b>
+      </label>
     </section>
   );
 }

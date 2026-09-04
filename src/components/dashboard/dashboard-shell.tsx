@@ -7,14 +7,14 @@ import { ReleafLogo } from "@/components/brand/releaf-logo";
 
 const navigation = [
   { href: "/dashboard", label: "Overview", mark: "⌂" },
+  { href: "/dashboard/enquiries", label: "Activity", mark: "✉" },
   { href: "/onboarding", label: "Practice profile", mark: "○" },
-  { href: "/dashboard/website", label: "Website editor", mark: "▣" },
-  { href: "/dashboard/blog", label: "Blog posts", mark: "✎" },
-  { href: "/dashboard/substack", label: "Blog source", mark: "↗" },
+  { href: "/dashboard/blog", label: "Blog", mark: "✎" },
   { href: "/dashboard/testimonials", label: "Testimonials", mark: "“" },
+  { href: "/dashboard/faqs", label: "FAQs", mark: "?" },
   { href: "/dashboard/calendly", label: "Calendly", mark: "◷" },
   { href: "/dashboard/enquiry-form", label: "Enquiry form", mark: "◇" },
-  { href: "/dashboard/enquiries", label: "Enquiries", mark: "✉" },
+  { href: "/dashboard/website", label: "Website builder", mark: "▣" },
 ];
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {

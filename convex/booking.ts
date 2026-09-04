@@ -14,7 +14,10 @@ export const get = query({
   handler: async (ctx) => {
     const userId = await userIdOrThrow(ctx);
     const saved = await ctx.db.query("bookingSettings").withIndex("by_user", (q) => q.eq("userId", userId)).unique();
-    return { calendlyUrl: saved?.calendlyUrl ?? "" };
+    return {
+      calendlyUrl: saved?.calendlyUrl ?? "",
+      enabled: Boolean(saved?.calendlyUrl) && saved?.enabled !== false,
+    };
   },
 });
 
@@ -26,8 +29,34 @@ export const save = mutation({
     if (!parsed.ok) throw new ConvexError(parsed.error);
     const updatedAt = Date.now();
     const existing = await ctx.db.query("bookingSettings").withIndex("by_user", (q) => q.eq("userId", userId)).unique();
-    if (existing) await ctx.db.patch(existing._id, { calendlyUrl: parsed.url, updatedAt });
-    else await ctx.db.insert("bookingSettings", { userId, calendlyUrl: parsed.url, updatedAt });
-    return { calendlyUrl: parsed.url, updatedAt };
+    if (existing)
+      await ctx.db.patch(existing._id, {
+        calendlyUrl: parsed.url,
+        enabled: true,
+        updatedAt,
+      });
+    else
+      await ctx.db.insert("bookingSettings", {
+        userId,
+        calendlyUrl: parsed.url,
+        enabled: true,
+        updatedAt,
+      });
+    return { calendlyUrl: parsed.url, enabled: true, updatedAt };
+  },
+});
+
+export const setEnabled = mutation({
+  args: { enabled: v.boolean() },
+  handler: async (ctx, { enabled }) => {
+    const userId = await userIdOrThrow(ctx);
+    const existing = await ctx.db
+      .query("bookingSettings")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
+    if (!existing)
+      throw new ConvexError("Add a Calendly event link before turning this on.");
+    await ctx.db.patch(existing._id, { enabled, updatedAt: Date.now() });
+    return { enabled };
   },
 });

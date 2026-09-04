@@ -14,7 +14,6 @@ const sectionIds = [
   "blog",
   "booking",
   "enquiry",
-  "contact",
 ] as const;
 const sectionSet = new Set<string>(sectionIds);
 const defaults = {

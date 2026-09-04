@@ -8,5 +8,5 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
 export default function CalendlyPage() {
   const settings = useQuery(api.booking.get);
-  return <AuthGate><DashboardShell>{settings === undefined ? <ProductLoading message="Opening your booking settings…" /> : <CalendlySettings initialUrl={settings.calendlyUrl} />}</DashboardShell></AuthGate>;
+  return <AuthGate><DashboardShell>{settings === undefined ? <ProductLoading message="Opening your booking settings…" /> : <CalendlySettings initialUrl={settings.calendlyUrl} initialEnabled={settings.enabled} />}</DashboardShell></AuthGate>;
 }

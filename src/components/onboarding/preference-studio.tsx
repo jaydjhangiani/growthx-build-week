@@ -11,6 +11,11 @@ import {
   orderedEnabledSections,
   trainingAndPracticeItems,
 } from "@/lib/site-template";
+import {
+  defaultWebsiteFaqs,
+  visibleWebsiteFaqs,
+  type WebsiteFaq,
+} from "@/lib/website-faqs";
 
 export type Tone = "warm" | "grounded" | "professional";
 export type Palette = "monsoon" | "sage" | "clay" | "lavender";
@@ -33,6 +38,7 @@ export type Profile = {
   certifications?: Array<string | { name: string; place: string }>;
   yearsExperience?: number;
   languages?: string[];
+  acceptingNewClients?: boolean;
   contactEmail?: string;
   services?: Array<{
     name: string;
@@ -49,6 +55,7 @@ export type PreviewContent = {
   biography?: string;
   whoYouHelp?: string;
   therapeuticApproach?: string;
+  faqs?: WebsiteFaq[];
 };
 export type PreviewAppearance = {
   headingFont: "editorial" | "clean" | "humanist";
@@ -86,7 +93,6 @@ const sections = [
   ["blog", "Blog"],
   ["booking", "Discovery call"],
   ["enquiry", "Enquiry form"],
-  ["contact", "Contact information"],
 ] as const;
 
 const tones: Array<{ id: Tone; name: string; sample: string }> = [
@@ -403,6 +409,7 @@ export function WebsitePreview({
   onBookingClick?: () => void;
 }) {
   const enabled = new Set(preferences.enabledSections);
+  const bookingAvailable = enabled.has("booking") && Boolean(bookingUrl?.trim());
   const name = profile?.fullName || "Your name";
   const specialization = profile?.specializations?.[0] || "what matters to you";
   const headline =
@@ -422,10 +429,24 @@ export function WebsitePreview({
           format: "online",
         },
       ];
+  const offersOnline = services.some(
+    (service) => service.format === "online" || service.format === "hybrid",
+  );
+  const offersInPerson = services.some(
+    (service) => service.format === "offline" || service.format === "hybrid",
+  );
+  const serviceFormat =
+    offersOnline && offersInPerson
+      ? "Online & in person"
+      : offersOnline
+        ? "Online"
+        : offersInPerson
+          ? "In person"
+          : "";
   const visibleSections = orderedEnabledSections(
     sectionOrder,
     preferences.enabledSections,
-  );
+  ).filter((sectionId) => sectionId !== "booking" || bookingAvailable);
   const navigation = navigationForSections(visibleSections);
   const sectionBackgrounds = new Map(
     appearance.sectionBackgrounds.map((item) => [
@@ -463,22 +484,25 @@ export function WebsitePreview({
               {content?.heroSupport ||
                 `Support for people navigating ${specialization.toLowerCase()} and life’s quieter pressures.`}
             </p>
-            {interactive ? (
+            {bookingAvailable && interactive ? (
               <a
                 className="preview-action"
-                href={bookingUrl || "#booking"}
-                target={bookingUrl ? "_blank" : undefined}
-                rel={bookingUrl ? "noreferrer" : undefined}
+                href={bookingUrl}
+                target="_blank"
+                rel="noreferrer"
                 onClick={onBookingClick}
               >
                 Book a discovery call →
               </a>
-            ) : (
+            ) : bookingAvailable ? (
               <button type="button">Book a discovery call →</button>
-            )}
-            <p className="preview-availability">
-              <span /> Accepting enquiries · Online &amp; in person
-            </p>
+            ) : null}
+            {profile?.acceptingNewClients !== false ? (
+              <p className="preview-availability">
+                <span /> Accepting new clients
+                {serviceFormat ? ` · ${serviceFormat}` : ""}
+              </p>
+            ) : null}
           </div>
           <div className="preview-photo">
             <div
@@ -535,7 +559,7 @@ export function WebsitePreview({
           </div>
           <div className="preview-focus-list">
             {(profile?.specializations?.length
-              ? profile.specializations
+              ? profile.specializations.slice(0, 5)
               : ["Anxiety & overwhelm", "Relationships", "Self-worth", "Life transitions"]
             ).map((area, index) => (
               <div key={area}>
@@ -631,7 +655,8 @@ export function WebsitePreview({
         </section>
       );
     }
-    if (id === "faqs")
+    if (id === "faqs") {
+      const faqs = visibleWebsiteFaqs(content?.faqs ?? defaultWebsiteFaqs);
       return (
         <section key={id} id={id} className={sectionClass(id, "preview-faq")}>
           <div>
@@ -639,21 +664,16 @@ export function WebsitePreview({
             <h3 className="preview-display-heading">Before we begin.</h3>
           </div>
           <div>
-            <details>
-              <summary>Is therapy confidential?<span>+</span></summary>
-              <p>Confidentiality and its limited safety and legal exceptions are discussed before beginning.</p>
-            </details>
-            <details>
-              <summary>How often will we meet?<span>+</span></summary>
-              <p>Session frequency can be decided together based on your needs.</p>
-            </details>
-            <details>
-              <summary>Do you offer emergency support?<span>+</span></summary>
-              <p>This practice is not an emergency service.</p>
-            </details>
+            {faqs.map((faq, index) => (
+              <details key={`${faq.question}-${index}`}>
+                <summary>{faq.question}<span>+</span></summary>
+                <p>{faq.answer}</p>
+              </details>
+            ))}
           </div>
         </section>
       );
+    }
     if (id === "blog")
       if (interactive && blogContent)
         return (
@@ -684,6 +704,8 @@ export function WebsitePreview({
           </div>
         </section>
       );
+    if (id === "booking")
+      if (!bookingAvailable) return null;
     if (id === "booking")
       if (interactive && bookingContent)
         return (
@@ -720,7 +742,7 @@ export function WebsitePreview({
         return (
           <section
             key={id}
-            id="enquiry-form"
+            id="enquiry"
             className={sectionClass(id, "public-enquiry-shell")}
           >
             {enquiryContent}
@@ -742,15 +764,6 @@ export function WebsitePreview({
           </div>
         </section>
       );
-    if (id === "contact")
-      return (
-        <section key={id} id={id} className={sectionClass(id, "preview-focus")}>
-          <h3 className="preview-section-title">Contact</h3>
-          <p>
-            {profile?.contactEmail || "Your contact details will appear here."}
-          </p>
-        </section>
-      );
     return null;
   }
 
@@ -766,8 +779,8 @@ export function WebsitePreview({
           {interactive ? (
             <>
               {navigation.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
-              {appearance.navbarLayout === "centered" ? (
-                <a href={bookingUrl || "#booking"} onClick={onBookingClick}>
+              {appearance.navbarLayout === "centered" && bookingAvailable ? (
+                <a href={bookingUrl} onClick={onBookingClick}>
                   Book a call
                 </a>
               ) : null}
@@ -775,7 +788,7 @@ export function WebsitePreview({
           ) : (
             <>
               {navigation.map((item) => <span key={item.href}>{item.label}</span>)}
-              {appearance.navbarLayout === "centered" ? (
+              {appearance.navbarLayout === "centered" && bookingAvailable ? (
                 <span>Book a call</span>
               ) : null}
             </>
@@ -793,29 +806,39 @@ export function WebsitePreview({
         ) : null}
         {appearance.navbarLayout !== "centered" &&
         appearance.navbarButtonStyle !== "none" &&
+        bookingAvailable &&
         interactive ? (
           <a
             className="preview-action"
-            href={bookingUrl || "#booking"}
-            target={bookingUrl ? "_blank" : undefined}
-            rel={bookingUrl ? "noreferrer" : undefined}
+            href={bookingUrl}
+            target="_blank"
+            rel="noreferrer"
             onClick={onBookingClick}
           >
             Book a call
           </a>
         ) : appearance.navbarLayout !== "centered" &&
-          appearance.navbarButtonStyle !== "none" ? (
+          appearance.navbarButtonStyle !== "none" &&
+          bookingAvailable ? (
           <button type="button">Book a call</button>
         ) : null}
       </header>
       {visibleSections.map(renderSection)}
       <footer>
-        {enabled.has("booking") ? (
+        {bookingAvailable ? (
           <b>Ready for a first conversation?</b>
         ) : (
           <b>{name}</b>
         )}
-        <span>{enabled.has("contact") ? "Contact" : ""}</span>
+        {profile?.contactEmail ? (
+          interactive ? (
+            <a href={`mailto:${profile.contactEmail}`}>
+              {profile.contactEmail}
+            </a>
+          ) : (
+            <span>{profile.contactEmail}</span>
+          )
+        ) : null}
       </footer>
     </div>
   );

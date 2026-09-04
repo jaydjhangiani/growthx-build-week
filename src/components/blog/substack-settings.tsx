@@ -1,27 +1,31 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, type ReactNode, useState } from "react";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { normalizeSubstackUrl } from "@/lib/substack";
 
 type RequestState = "idle" | "working" | "success" | "error";
 
-export function SubstackSettings() {
+export function SubstackSettings({ nativeContent }: { nativeContent?: ReactNode }) {
   const settings = useQuery(api.substack.get);
   const refreshFeed = useAction(api.substack.refresh);
   const chooseSource = useMutation(api.substack.chooseSource);
   const [url, setUrl] = useState("");
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const [sourceState, setSourceState] = useState<RequestState>("idle");
+  const [viewSource, setViewSource] = useState<"native" | "substack" | null>(
+    null,
+  );
   const [message, setMessage] = useState("");
 
   if (settings === undefined)
     return <div className="substack-loading">Opening blog sources…</div>;
 
   const currentSettings = settings;
-  const inputValue = url || settings.publicationUrl;
+  const inputValue = url || settings.publicationUrl || "";
   const connected = Boolean(settings.lastSuccessfulRefresh);
+  const visibleSource = viewSource ?? settings.source;
 
   async function connect(event: FormEvent) {
     event.preventDefault();
@@ -65,7 +69,13 @@ export function SubstackSettings() {
   }
 
   async function selectSource(source: "native" | "substack") {
-    if (sourceState === "working" || source === currentSettings.source) return;
+    if (sourceState === "working") return;
+    setViewSource(source);
+    if (source === "substack" && !connected) {
+      setMessage("");
+      return;
+    }
+    if (source === currentSettings.source) return;
     setSourceState("working");
     setMessage("");
     try {
@@ -77,6 +87,7 @@ export function SubstackSettings() {
           : "Your imported Substack posts will appear on the website.",
       );
     } catch (error) {
+      setViewSource(null);
       setSourceState("error");
       setMessage(readableError(error));
     }
@@ -101,8 +112,8 @@ export function SubstackSettings() {
       <section className="blog-source-choices" aria-label="Choose blog source">
         <button
           type="button"
-          className={settings.source === "native" ? "selected" : ""}
-          aria-pressed={settings.source === "native"}
+          className={visibleSource === "native" ? "selected" : ""}
+          aria-pressed={visibleSource === "native"}
           disabled={sourceState === "working"}
           onClick={() => void selectSource("native")}
         >
@@ -115,9 +126,9 @@ export function SubstackSettings() {
         </button>
         <button
           type="button"
-          className={settings.source === "substack" ? "selected" : ""}
-          aria-pressed={settings.source === "substack"}
-          disabled={!connected || sourceState === "working"}
+          className={visibleSource === "substack" ? "selected" : ""}
+          aria-pressed={visibleSource === "substack"}
+          disabled={sourceState === "working"}
           onClick={() => void selectSource("substack")}
         >
           <span>02</span>
@@ -135,6 +146,7 @@ export function SubstackSettings() {
         </button>
       </section>
 
+      {visibleSource === "native" ? nativeContent : (
       <div className="substack-workspace">
         <section className="substack-connect-card">
           <header>
@@ -276,6 +288,7 @@ export function SubstackSettings() {
           )}
         </section>
       </div>
+      )}
     </div>
   );
 }

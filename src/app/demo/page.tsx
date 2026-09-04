@@ -18,7 +18,6 @@ const demoSections = [
   "booking",
   "enquiry",
   "faqs",
-  "contact",
 ] as const;
 
 export default function DemoPage() {
@@ -35,6 +34,7 @@ export default function DemoPage() {
           profilePhotoUrl: "/diva-mehta.png",
           qualifications: [...samplePractice.qualifications],
           certifications: [...samplePractice.certifications],
+          acceptingNewClients: true,
           contactEmail: "hello@divamehta.in",
           services: samplePractice.services.map((service) => ({
             name: service.title,
@@ -80,6 +80,7 @@ export default function DemoPage() {
         }}
         sectionOrder={demoSections}
         interactive
+        bookingUrl="https://calendly.com/diva-mehta/discovery-call"
       />
     </main>
   );

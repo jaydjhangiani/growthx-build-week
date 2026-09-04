@@ -263,7 +263,7 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
           {step === 3 ? <div className="profile-fields">
             <Field label="Biography" hint={`${form.biography.length} characters · Minimum 40`} error={errors.biography}><textarea value={form.biography} onChange={(e) => setField("biography", e.target.value)} rows={5} placeholder="I work with adults who look capable on the outside but feel overwhelmed underneath…" aria-invalid={Boolean(errors.biography)} /></Field>
             <Field label="Who do you help?" hint="Describe the people and situations you commonly support" error={errors.whoYouHelp}><textarea value={form.whoYouHelp} onChange={(e) => setField("whoYouHelp", e.target.value)} rows={4} placeholder="Young adults navigating anxiety, relationships, identity, and life transitions." aria-invalid={Boolean(errors.whoYouHelp)} /></Field>
-            <Field label="Specializations" hint="Separate multiple areas with commas" error={errors.specializations}><input value={form.specializations} onChange={(e) => setField("specializations", e.target.value)} placeholder="Anxiety, relationships, self-worth" aria-invalid={Boolean(errors.specializations)} /></Field>
+            <Field label="Specializations" hint="Add up to 5 areas, separated with commas" error={errors.specializations}><input value={form.specializations} onChange={(e) => setField("specializations", e.target.value)} placeholder="Anxiety, relationships, self-worth" aria-invalid={Boolean(errors.specializations)} /></Field>
             <Field label="Therapeutic approach" hint={`${form.therapeuticApproach.length} characters · Minimum 30`} error={errors.therapeuticApproach}><textarea value={form.therapeuticApproach} onChange={(e) => setField("therapeuticApproach", e.target.value)} rows={5} placeholder="My approach is collaborative, trauma-informed, and grounded in each person’s pace…" aria-invalid={Boolean(errors.therapeuticApproach)} /></Field>
           </div> : null}
 
@@ -283,7 +283,7 @@ export function OnboardingForm({ draft }: { draft: Draft | null }) {
           </div> : null}
 
           {errors.form ? <p className="profile-form-error" role="alert">{errors.form}</p> : null}
-          <footer className="profile-actions">{step > 1 ? <button className="profile-back" type="button" onClick={() => goToStep(step - 1)}>← Back</button> : <span />}{step < 5 ? <button className="profile-continue" type="submit" disabled={saveState === "saving"}>{saveState === "saving" ? "Saving…" : step === 4 ? "Save and review" : "Save and continue"}<span aria-hidden="true">→</span></button> : <Link className="profile-continue" href="/onboarding/preferences">Choose website preferences <span aria-hidden="true">→</span></Link>}</footer>
+          <footer className="profile-actions">{step > 1 ? <button className="profile-back" type="button" onClick={() => goToStep(step - 1)}>← Back</button> : <span />}{step < 5 ? <button className="profile-continue" type="submit" disabled={saveState === "saving"}>{saveState === "saving" ? "Saving…" : step === 4 ? "Save and review" : "Save and continue"}<span aria-hidden="true">→</span></button> : <Link className="profile-continue" href="/dashboard/blog">Set up your blog <span aria-hidden="true">→</span></Link>}</footer>
         </form>
       </section>
     </div>

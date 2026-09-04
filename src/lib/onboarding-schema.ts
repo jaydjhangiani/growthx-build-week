@@ -23,7 +23,10 @@ export const credentialsSchema = z.object({
 export const practiceSchema = z.object({
   biography: z.string().trim().min(40, "Write at least 40 characters about yourself."),
   whoYouHelp: z.string().trim().min(20, "Write at least 20 characters about who you help."),
-  specializations: list("specialization"),
+  specializations: list("specialization").refine(
+    (items) => items.length <= 5,
+    "Add up to 5 specializations.",
+  ),
   therapeuticApproach: z.string().trim().min(30, "Write at least 30 characters about your approach."),
 });
 

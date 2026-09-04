@@ -44,6 +44,7 @@ export default defineSchema({
         }),
       ),
     ),
+    acceptingNewClients: v.optional(v.boolean()),
     contactEmail: v.optional(v.string()),
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
@@ -77,6 +78,9 @@ export default defineSchema({
     biography: v.string(),
     whoYouHelp: v.string(),
     therapeuticApproach: v.string(),
+    faqs: v.optional(
+      v.array(v.object({ question: v.string(), answer: v.string() })),
+    ),
     enabledSections: v.array(v.string()),
     sectionOrder: v.array(v.string()),
     palette: v.string(),
@@ -205,6 +209,7 @@ export default defineSchema({
         }),
       ),
       contactEmail: v.string(),
+      acceptingNewClients: v.optional(v.boolean()),
       calendlyUrl: v.optional(v.string()),
       headline: v.string(),
       heroEyebrow: v.optional(v.string()),
@@ -213,6 +218,9 @@ export default defineSchema({
       biography: v.string(),
       whoYouHelp: v.string(),
       therapeuticApproach: v.string(),
+      faqs: v.optional(
+        v.array(v.object({ question: v.string(), answer: v.string() })),
+      ),
       enabledSections: v.array(v.string()),
       sectionOrder: v.array(v.string()),
       palette: v.union(
@@ -337,6 +345,7 @@ export default defineSchema({
   bookingSettings: defineTable({
     userId: v.id("users"),
     calendlyUrl: v.string(),
+    enabled: v.optional(v.boolean()),
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
   enquiryFormConfigs: defineTable({

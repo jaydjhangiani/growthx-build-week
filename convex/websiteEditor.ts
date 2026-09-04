@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { defaultWebsiteFaqs } from "../src/lib/website-faqs";
 
 const sectionIds = [
   "introduction",
@@ -14,7 +15,6 @@ const sectionIds = [
   "blog",
   "booking",
   "enquiry",
-  "contact",
 ];
 const validSections = new Set(sectionIds);
 const validPalettes = new Set(["monsoon", "sage", "clay", "lavender"]);
@@ -37,7 +37,7 @@ export const get = query({
   args: {},
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
-    const [draft, profile, preferences] = await Promise.all([
+    const [draft, profile, preferences, booking] = await Promise.all([
       ctx.db
         .query("websiteDrafts")
         .withIndex("by_user", (q) => q.eq("userId", userId))
@@ -50,11 +50,16 @@ export const get = query({
         .query("websitePreferences")
         .withIndex("by_user", (q) => q.eq("userId", userId))
         .unique(),
+      ctx.db
+        .query("bookingSettings")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .unique(),
     ]);
     const enabledSections = (
       preferences?.enabledSections ?? sectionIds.filter((id) => id !== "testimonials")
-    ).filter(
-      (id) => validSections.has(id),
+    ).filter((id) =>
+      validSections.has(id) &&
+      (id !== "booking" || Boolean(booking?.calendlyUrl && booking.enabled !== false)),
     );
     const sectionOrder = (draft?.sectionOrder ?? sectionIds).filter((id) =>
       validSections.has(id),
@@ -97,6 +102,11 @@ export const get = query({
       whoYouHelp: draft?.whoYouHelp ?? profile?.whoYouHelp ?? "",
       therapeuticApproach:
         draft?.therapeuticApproach ?? profile?.therapeuticApproach ?? "",
+      faqs: draft?.faqs ?? defaultWebsiteFaqs,
+      calendlyUrl:
+        booking?.calendlyUrl && booking.enabled !== false
+          ? booking.calendlyUrl
+          : "",
       enabledSections,
       sectionOrder,
       palette: preferences?.palette ?? draft?.palette ?? "monsoon",
@@ -128,6 +138,7 @@ export const get = query({
             languages: profile.languages,
             specializations: profile.specializations,
             services: profile.services,
+            acceptingNewClients: profile.acceptingNewClients !== false,
             contactEmail: profile.contactEmail,
             profilePhotoUrl: profile.profilePhotoId
               ? await ctx.storage.getUrl(profile.profilePhotoId)
@@ -147,6 +158,7 @@ export const save = mutation({
     biography: v.string(),
     whoYouHelp: v.string(),
     therapeuticApproach: v.string(),
+    faqs: v.array(v.object({ question: v.string(), answer: v.string() })),
     enabledSections: v.array(v.string()),
     sectionOrder: v.array(v.string()),
     palette: v.string(),
@@ -248,13 +260,24 @@ export const save = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
+    const booking = await ctx.db
+      .query("bookingSettings")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
     const sectionOrder = Array.from(
       new Set(args.sectionOrder.filter((id) => validSections.has(id))),
     );
     for (const id of sectionIds)
       if (!sectionOrder.includes(id)) sectionOrder.push(id);
     const enabledSections = Array.from(
-      new Set(args.enabledSections.filter((id) => validSections.has(id))),
+      new Set(
+        args.enabledSections.filter(
+          (id) =>
+            validSections.has(id) &&
+            (id !== "booking" ||
+              Boolean(booking?.calendlyUrl && booking.enabled !== false)),
+        ),
+      ),
     );
     if (!enabledSections.includes("blog")) enabledSections.push("blog");
     if (!validPalettes.has(args.palette))
@@ -269,6 +292,10 @@ export const save = mutation({
       biography: args.biography.trim(),
       whoYouHelp: args.whoYouHelp.trim(),
       therapeuticApproach: args.therapeuticApproach.trim(),
+      faqs: args.faqs.map((faq) => ({
+        question: faq.question.trim(),
+        answer: faq.answer.trim(),
+      })),
       enabledSections,
       sectionOrder,
       palette,

@@ -42,6 +42,41 @@ export const getDraft = query({
   },
 });
 
+export const getAvailability = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireUserId(ctx);
+    const draft = await ctx.db
+      .query("onboardingDrafts")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
+    return draft?.acceptingNewClients !== false;
+  },
+});
+
+export const setAvailability = mutation({
+  args: { acceptingNewClients: v.boolean() },
+  handler: async (ctx, { acceptingNewClients }) => {
+    const userId = await requireUserId(ctx);
+    const existing = await ctx.db
+      .query("onboardingDrafts")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
+    const updatedAt = Date.now();
+    if (existing)
+      await ctx.db.patch(existing._id, { acceptingNewClients, updatedAt });
+    else
+      await ctx.db.insert("onboardingDrafts", {
+        userId,
+        currentStep: 1,
+        completedSteps: [],
+        acceptingNewClients,
+        updatedAt,
+      });
+    return acceptingNewClients;
+  },
+});
+
 export const saveStep = mutation({
   args: {
     step: v.number(),
@@ -75,7 +110,10 @@ export const saveStep = mutation({
         yearsExperience: data.yearsExperience,
       };
     } else if (step === 3 && "biography" in data) {
-      cleaned = { biography: required(data.biography, "Biography", 40), whoYouHelp: required(data.whoYouHelp, "Who you help", 20), specializations: cleanList(data.specializations, "specialization"), therapeuticApproach: required(data.therapeuticApproach, "Therapeutic approach", 30) };
+      const specializations = cleanList(data.specializations, "specialization");
+      if (specializations.length > 5)
+        throw new ConvexError("Add up to 5 specializations.");
+      cleaned = { biography: required(data.biography, "Biography", 40), whoYouHelp: required(data.whoYouHelp, "Who you help", 20), specializations, therapeuticApproach: required(data.therapeuticApproach, "Therapeutic approach", 30) };
     } else if (step === 4 && "services" in data) {
       const email = data.contactEmail.trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new ConvexError("Enter a valid contact email.");

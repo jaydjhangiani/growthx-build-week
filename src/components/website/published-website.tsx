@@ -39,6 +39,7 @@ export function PublishedWebsite({ subdomain }: { subdomain: string }) {
           certifications: site.certifications,
           specializations: site.specializations,
           services: site.services,
+          acceptingNewClients: site.acceptingNewClients,
           contactEmail: site.contactEmail,
           biography: site.biography,
           whoYouHelp: site.whoYouHelp,
@@ -75,6 +76,7 @@ export function PublishedWebsite({ subdomain }: { subdomain: string }) {
           biography: site.biography,
           whoYouHelp: site.whoYouHelp,
           therapeuticApproach: site.therapeuticApproach,
+          faqs: site.faqs,
         }}
         sectionOrder={site.sectionOrder}
         interactive

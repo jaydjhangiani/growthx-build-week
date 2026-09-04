@@ -17,6 +17,7 @@ import type * as http from "../http.js";
 import type * as onboarding from "../onboarding.js";
 import type * as preferences from "../preferences.js";
 import type * as publishing from "../publishing.js";
+import type * as setup from "../setup.js";
 import type * as substack from "../substack.js";
 import type * as testimonials from "../testimonials.js";
 import type * as users from "../users.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   onboarding: typeof onboarding;
   preferences: typeof preferences;
   publishing: typeof publishing;
+  setup: typeof setup;
   substack: typeof substack;
   testimonials: typeof testimonials;
   users: typeof users;

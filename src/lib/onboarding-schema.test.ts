@@ -15,4 +15,13 @@ describe("guided profile validation", () => {
   it("rejects an invalid service", () => {
     expect(servicesSchema.safeParse({ services: [{ name: "", format: "online", durationMinutes: 5, feeInr: -1 }], contactEmail: "bad" }).success).toBe(false);
   });
+
+  it("rejects more than five specializations", () => {
+    expect(practiceSchema.safeParse({
+      biography: "I offer a warm and thoughtful space for young adults in Mumbai.",
+      whoYouHelp: "Young adults navigating anxiety and relationships.",
+      specializations: ["Anxiety", "Relationships", "Grief", "Identity", "Burnout", "Trauma"],
+      therapeuticApproach: "Collaborative, trauma-informed, and paced around each person.",
+    }).success).toBe(false);
+  });
 });

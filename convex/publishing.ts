@@ -7,6 +7,10 @@ import {
   suggestSubdomain,
   validateSubdomain,
 } from "../src/lib/subdomain";
+import {
+  defaultWebsiteFaqs,
+  visibleWebsiteFaqs,
+} from "../src/lib/website-faqs";
 
 async function requireUser(ctx: Parameters<typeof getAuthUserId>[0]) {
   const userId = await getAuthUserId(ctx);
@@ -122,7 +126,6 @@ export const publish = mutation({
       "blog",
       "booking",
       "enquiry",
-      "contact",
     ];
     const snapshot = {
       fullName: profile.fullName,
@@ -133,7 +136,11 @@ export const publish = mutation({
       specializations: profile.specializations ?? [],
       services: profile.services ?? [],
       contactEmail: profile.contactEmail ?? "",
-      calendlyUrl: booking?.calendlyUrl || undefined,
+      acceptingNewClients: profile.acceptingNewClients !== false,
+      calendlyUrl:
+        booking?.calendlyUrl && booking.enabled !== false
+          ? booking.calendlyUrl
+          : undefined,
       headline: draft?.headline ?? profile.fullName,
       heroEyebrow:
         draft?.heroEyebrow ??
@@ -147,13 +154,14 @@ export const publish = mutation({
       whoYouHelp: draft?.whoYouHelp ?? profile.whoYouHelp ?? "",
       therapeuticApproach:
         draft?.therapeuticApproach ?? profile.therapeuticApproach ?? "",
+      faqs: visibleWebsiteFaqs(draft?.faqs ?? defaultWebsiteFaqs),
       enabledSections: (
         preferences?.enabledSections ??
         draft?.enabledSections ??
         sectionIds.filter((id) => id !== "testimonials")
-      ).filter((id) => id !== "fees"),
+      ).filter((id) => id !== "fees" && id !== "contact"),
       sectionOrder: (draft?.sectionOrder ?? sectionIds).filter(
-        (id) => id !== "fees",
+        (id) => id !== "fees" && id !== "contact",
       ),
       palette: (preferences?.palette ?? draft?.palette ?? "monsoon") as
         "monsoon" | "sage" | "clay" | "lavender",
@@ -223,8 +231,23 @@ export const getPublicSite = query({
       )
       .unique();
     if (!publication || publication.status !== "published") return null;
+    const [booking, liveProfile] = await Promise.all([
+      ctx.db
+        .query("bookingSettings")
+        .withIndex("by_user", (q) => q.eq("userId", publication.userId))
+        .unique(),
+      ctx.db
+        .query("onboardingDrafts")
+        .withIndex("by_user", (q) => q.eq("userId", publication.userId))
+        .unique(),
+    ]);
     return {
       ...publication.snapshot,
+      calendlyUrl:
+        booking?.calendlyUrl && booking.enabled !== false
+          ? booking.calendlyUrl
+          : undefined,
+      acceptingNewClients: liveProfile?.acceptingNewClients !== false,
       sectionBackgrounds: (publication.snapshot.sectionBackgrounds ?? []).map(
         (item) => ({
           sectionId: item.sectionId,

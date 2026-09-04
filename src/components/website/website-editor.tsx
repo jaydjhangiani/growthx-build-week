@@ -19,12 +19,13 @@ import {
   validateSubdomain,
 } from "@/lib/subdomain";
 
-type Panel = "content" | "design" | "sections" | "publish";
+type Panel = "content" | "faqs" | "design" | "sections" | "publish";
 type EditorDraft = NonNullable<
   ReturnType<typeof useQuery<typeof api.websiteEditor.get>>
 >;
 const panels: Array<{ id: Panel; label: string }> = [
   { id: "content", label: "Content" },
+  { id: "faqs", label: "FAQs" },
   { id: "design", label: "Design" },
   { id: "sections", label: "Sections" },
   { id: "publish", label: "Publish" },
@@ -41,7 +42,6 @@ const sections = [
   ["blog", "Blog"],
   ["booking", "Discovery call"],
   ["enquiry", "Enquiry form"],
-  ["contact", "Contact"],
 ] as const;
 const palettes = [
   {
@@ -123,6 +123,7 @@ function editorSaveArgs(draft: EditorDraft) {
     biography: draft.biography,
     whoYouHelp: draft.whoYouHelp,
     therapeuticApproach: draft.therapeuticApproach,
+    faqs: draft.faqs,
     enabledSections: draft.enabledSections,
     sectionOrder: draft.sectionOrder,
     palette: draft.palette,
@@ -146,13 +147,17 @@ function editorSaveArgs(draft: EditorDraft) {
   };
 }
 
-export function WebsiteEditor() {
+export function WebsiteEditor({
+  defaultPanel = "content",
+}: {
+  defaultPanel?: Panel;
+}) {
   const initial = useQuery(api.websiteEditor.get);
   const searchParams = useSearchParams();
   const requestedPanel = searchParams.get("panel");
   const initialPanel = panels.some((item) => item.id === requestedPanel)
     ? (requestedPanel as Panel)
-    : "content";
+    : defaultPanel;
   if (initial === undefined)
     return (
       <div className="website-editor-loading">Opening your website draft…</div>
@@ -187,12 +192,32 @@ function WebsiteEditorWorkspace({
 
   function selectPanel(next: Panel) {
     setPanel(next);
-    window.history.replaceState(null, "", `/dashboard/website?panel=${next}`);
+    window.history.replaceState(
+      null,
+      "",
+      next === "faqs" ? "/dashboard/faqs" : `/dashboard/website?panel=${next}`,
+    );
   }
   function update(patch: Partial<EditorDraft>) {
     editVersion.current += 1;
     setDraft((current) => ({ ...current, ...patch }));
     setState("unsaved");
+  }
+  function addFaq() {
+    update({ faqs: [...draft.faqs, { question: "", answer: "" }] });
+  }
+  function updateFaq(
+    index: number,
+    patch: Partial<EditorDraft["faqs"][number]>,
+  ) {
+    update({
+      faqs: draft.faqs.map((faq, faqIndex) =>
+        faqIndex === index ? { ...faq, ...patch } : faq,
+      ),
+    });
+  }
+  function removeFaq(index: number) {
+    update({ faqs: draft.faqs.filter((_, faqIndex) => faqIndex !== index) });
   }
 
   useEffect(() => {
@@ -330,7 +355,7 @@ function WebsiteEditorWorkspace({
               <label>
                 Professional and location line
                 <input
-                  value={draft.heroEyebrow}
+                  value={draft.heroEyebrow ?? ""}
                   onChange={(event) =>
                     update({ heroEyebrow: event.target.value })
                   }
@@ -341,7 +366,7 @@ function WebsiteEditorWorkspace({
                 Supporting introduction
                 <textarea
                   rows={3}
-                  value={draft.heroSupport}
+                  value={draft.heroSupport ?? ""}
                   onChange={(event) =>
                     update({ heroSupport: event.target.value })
                   }
@@ -361,7 +386,7 @@ function WebsiteEditorWorkspace({
               <label>
                 What we can explore — heading
                 <input
-                  value={draft.exploreHeading}
+                  value={draft.exploreHeading ?? ""}
                   onChange={(event) =>
                     update({ exploreHeading: event.target.value })
                   }
@@ -423,10 +448,60 @@ function WebsiteEditorWorkspace({
               </Link>
             </div>
           ) : null}
-          {panel === "design" ? (
+          {panel === "faqs" ? (
             <div className="editor-panel">
               <PanelHeader
                 number="02"
+                title="FAQs"
+                description="Answer the questions visitors often ask before reaching out."
+              />
+              <div className="editor-faq-list">
+                {draft.faqs.map((faq, index) => (
+                  <section className="editor-faq-card" key={index}>
+                    <div>
+                      <b>Question {String(index + 1).padStart(2, "0")}</b>
+                      <button type="button" onClick={() => removeFaq(index)}>
+                        Remove
+                      </button>
+                    </div>
+                    <label>
+                      Question
+                      <input
+                        value={faq.question}
+                        onChange={(event) =>
+                          updateFaq(index, { question: event.target.value })
+                        }
+                        placeholder="How often will we meet?"
+                      />
+                    </label>
+                    <label>
+                      Answer
+                      <textarea
+                        rows={4}
+                        value={faq.answer}
+                        onChange={(event) =>
+                          updateFaq(index, { answer: event.target.value })
+                        }
+                        placeholder="Share a short, clear answer."
+                      />
+                    </label>
+                  </section>
+                ))}
+                {draft.faqs.length === 0 ? (
+                  <p className="editor-faq-empty">
+                    No questions yet. Add one, or hide the FAQ section under Sections.
+                  </p>
+                ) : null}
+                <button className="editor-add-faq" type="button" onClick={addFaq}>
+                  + Add FAQ
+                </button>
+              </div>
+            </div>
+          ) : null}
+          {panel === "design" ? (
+            <div className="editor-panel">
+              <PanelHeader
+                number="03"
                 title="Design"
                 description="Choose one consistent visual direction."
               />
@@ -628,7 +703,7 @@ function WebsiteEditorWorkspace({
           {panel === "sections" ? (
             <div className="editor-panel">
               <PanelHeader
-                number="03"
+                number="04"
                 title="Sections"
                 description="Choose what appears and arrange the story."
               />
@@ -637,6 +712,8 @@ function WebsiteEditorWorkspace({
                   const label =
                     sections.find((item) => item[0] === id)?.[1] ?? id;
                   const enabled = draft.enabledSections.includes(id);
+                  const bookingUnavailable =
+                    id === "booking" && !draft.calendlyUrl;
                   const background =
                     draft.sectionBackgrounds.find(
                       (item) => item.sectionId === id,
@@ -652,7 +729,7 @@ function WebsiteEditorWorkspace({
                           <input
                             type="checkbox"
                             checked={enabled}
-                            disabled={id === "blog"}
+                            disabled={id === "blog" || bookingUnavailable}
                             onChange={() =>
                               update({
                                 enabledSections: enabled
@@ -665,6 +742,11 @@ function WebsiteEditorWorkspace({
                           />
                           {label}
                           {id === "blog" ? <small>Required</small> : null}
+                          {bookingUnavailable ? (
+                            <small>
+                              <Link href="/dashboard/calendly">Connect Calendly first</Link>
+                            </small>
+                          ) : null}
                         </label>
                         <span>
                           <button
@@ -828,8 +910,10 @@ function WebsiteEditorWorkspace({
                 biography: draft.biography,
                 whoYouHelp: draft.whoYouHelp,
                 therapeuticApproach: draft.therapeuticApproach,
+                faqs: draft.faqs,
               }}
               sectionOrder={draft.sectionOrder}
+              bookingUrl={draft.calendlyUrl}
             />
           </div>
         </section>
@@ -980,7 +1064,7 @@ function PublishPanelReady({
   return (
     <div className="editor-panel editor-publish-panel">
       <PanelHeader
-        number="04"
+        number="05"
         title="Publish"
         description="Save the current preview and make it public."
       />
